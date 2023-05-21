@@ -147,6 +147,7 @@ const dropDownThemen = [
 let currentlySelectedDD = dropDownThemen[0];
 var scrollVis = function () {
     // main svg used for visualization
+    let tooltipP = null;
 
     var svg = null;
     // d3 selection that will be used
@@ -241,20 +242,9 @@ var scrollVis = function () {
         map = map.merge(mapE)
             .attr("d", path)
             .attr("stroke", "#000")
-            .attr("stroke-width", (d) => {
-                if (d.properties.gem_name !== null && !matcher(d.properties.gem_name.toString().toLowerCase(), "bodensee")) {
-                    return 1
-                } else {
-                    return 0
-                }
-            }).attr("fill",  (d) => {
-                if (matcher(d.properties.gem_name.toString().toLowerCase(), "bodensee")){
-                    return "#ffffff"
-                }
-                else{
-                    switchDropDownData(currentlySelectedDD, false, false)
-                }
-            }).style("visibility", "hidden")
+            .attr("stroke-width", 1)
+            .attr("fill",switchDropDownData(currentlySelectedDD, false, false))
+            .style("visibility", "hidden")
         /*            .attr("id", (d,i) => {
                         return "mapPath" + i
                     })*/
@@ -295,9 +285,11 @@ var scrollVis = function () {
         activateFunctions[0] = showTitle;
         activateFunctions[1] = showMapOne;
         activateFunctions[2] = showMapTwo;
-        activateFunctions[3] = showMapThree;
-        activateFunctions[4] = showMapFour;
-        activateFunctions[5] = showMapFive;
+        activateFunctions[3] = showMapTwoAHalf;
+        activateFunctions[4] = showMapThree;
+        activateFunctions[5] = showMapFour;
+        activateFunctions[6] = showMapFive;
+        activateFunctions[7] = showMapSix;
 
 
         // updateFunctions are called while
@@ -314,9 +306,7 @@ var scrollVis = function () {
 
 
     function showTitle() {
-        g.selectAll(".map-number1")
-            .transition("hidemap")
-            .duration(0)
+        g.selectAll("path")
             .style("visibility", "hidden")
         d3.select("#tooltip").style("opacity", 0)
         d3.select("#colorscale").style("opacity", 0)
@@ -327,106 +317,38 @@ var scrollVis = function () {
             .attr('opacity', 1.0);
     }
 
-    function drawScale(id, interpolator) {
-
-
-        var data = Array.from(Array(100).keys());
-
-        var cScale = d3.scaleSequential()
-            .interpolator(interpolator)
-            .domain([0,99]);
-
-        var xScale = d3.scaleLinear()
-            .domain([0,99])
-            .range([100, width-100]);
-        d3.select("#" + id).style("opacity", 1)
-        if (u !== null){
-            u.transition().duration(0).style("background-color", (d) => {
-                let c = cScale(d)
-                return c
-            })
-        }else {
-            u = d3.select("#" + id)
-                .selectAll("rect")
-                .data(data)
-                .enter()
-                .append("rect")
-                .attr("class", "colorscale")
-                .style('position', 'absolute')
-                .style("left", (d) => Math.floor(xScale(d)) + "px")
-                .style("top", innerHeight / 9 + "px")
-                .style("height", 40 + "px")
-                .style("width", (d) => {
-                    if (d === 99) {
-                        return 6 + "px";
-                    }
-                    return (Math.floor(xScale(d + 1)) - Math.floor(xScale(d)) + 1) + "px";
-                })
-                //instead of filling.. nur e zwüschelösig
-                .style("background-color", (d) => {
-                    let c = cScale(d)
-                    return c
-                })
-                .style("border", "1px solid black")
-
-            d3.select("#" + id).append("text")
-                .style('position', 'absolute')
-                .style("top", (innerHeight / 9)-30 + "px")
-                .style("left", Math.floor(xScale(0)) + "px")
-                .attr("font-size", 20)
-                .attr("fill", "red")
-                .text("0%");
-
-            d3.select("#" + id).append("text")
-                .style('position', 'absolute')
-                .style("top", (innerHeight / 9)-30 + "px")
-                .style("left", Math.floor(xScale(100))-39 + "px")
-                .attr("font-size", 20)
-                .attr("fill", "red")
-                .text("100%");
-        }
-    }
-
     function showMapOne() {
         g.selectAll('.openvis-title')
             .transition()
             .duration(0)
             .attr('opacity', 0);
-        g.selectAll(".map-number1")
+        g.selectAll("path")
+            .transition()
+            .duration(0)
             .style("visibility", "visible")
-            .attr("fill",  (d) => {
-                if (matcher(d.properties.gem_name.toString().toLowerCase(), "bodensee")){
-                    return "#ffffff"
-                }
-                else{
-                    switchDropDownData(currentlySelectedDD, true, true)
-                }
-            })
-        drawScale("colorscale", d3.interpolate("#FFF", currentlySelectedDD.color))
+            .attr("fill",switchDropDownData(currentlySelectedDD, true, true))
     }
 
     function showMapTwo() {
-        currentlySelectedDD = dropDownThemen[1]; //sp
-
+        switchDropDownData(currentlySelectedDD, true, false)
+    }
+    function showMapTwoAHalf() {
+        switchDropDownData(currentlySelectedDD, true, false)
+    }
+    function showMapThree() {
         switchDropDownData(currentlySelectedDD, true, false)
     }
 
-    function showMapThree() {
-        currentlySelectedDD = dropDownThemen[2]; //fdp
-
-        switchDropDownData(currentlySelectedDD, true,false)
-    }
-
     function showMapFour() {
-        currentlySelectedDD = dropDownThemen[4]; //cvp
-
-        switchDropDownData(currentlySelectedDD, true,false)
+        switchDropDownData(currentlySelectedDD, true, false)
     }
     function showMapFive() {
-        currentlySelectedDD = dropDownThemen[6]; //evp
-
-        switchDropDownData(currentlySelectedDD, true,false)
+        switchDropDownData(currentlySelectedDD, true, false)
     }
+    function showMapSix() {
+        switchDropDownData(currentlySelectedDD, true, false)
+    }
+    /*
     function setOppacity(selectedDDNumber){
             g.selectAll(".map-number1")
                 .style("opacity", (d) => {
@@ -497,20 +419,213 @@ var scrollVis = function () {
             }
         }
     }
-    function setFilling(selectedDD) {
+    */
+    function drawScale(id, interpolator) {
+
+
+        var data = Array.from(Array(100).keys());
+
+        var cScale = d3.scaleSequential()
+            .interpolator(interpolator)
+            .domain([0,99]);
+
+        var xScale = d3.scaleLinear()
+            .domain([0,99])
+            .range([100, width-100]);
+        d3.select("#" + id).style("opacity", 1)
+        if (u !== null){
+            u.transition().duration(0).style("background-color", (d) => {
+                let c = cScale(d)
+                return c
+            })
+        }else {
+            u = d3.select("#" + id)
+                .selectAll("rect")
+                .data(data)
+                .enter()
+                .append("rect")
+                .attr("class", "colorscale")
+                .style('position', 'absolute')
+                .style("left", (d) => Math.floor(xScale(d)) + "px")
+                .style("top", innerHeight / 9 + "px")
+                .style("height", 40 + "px")
+                .style("width", (d) => {
+                    if (d === 99) {
+                        return 6 + "px";
+                    }
+                    return (Math.floor(xScale(d + 1)) - Math.floor(xScale(d)) + 1) + "px";
+                })
+                //instead of filling.. nur e zwüschelösig
+                .style("background-color", (d) => {
+                    let c = cScale(d)
+                    return c
+                })
+                .style("border", "1px solid black")
+
+            d3.select("#" + id).append("text")
+                .style('position', 'absolute')
+                .style("top", (innerHeight / 9)-30 + "px")
+                .style("left", Math.floor(xScale(0)) + "px")
+                .attr("font-size", 20)
+                .attr("fill", "red")
+                .text("0%");
+
+            d3.select("#" + id).append("text")
+                .style('position', 'absolute')
+                .style("top", (innerHeight / 9)-30 + "px")
+                .style("left", Math.floor(xScale(100))-39 + "px")
+                .attr("font-size", 20)
+                .attr("fill", "red")
+                .text("100%");
+        }
+    }
+
+    function setFilling(selectedDD, isOtherArray) {
         let data = partei_starken_Array;
+        let interpolator = d3.interpolate("#FFF", selectedDD.color)
+
+        var cScale = d3.scaleSequential()
+            .interpolator(interpolator)
+            .domain([0,99]);
+
         g.selectAll(".map-number1").style("fill", (d) => {
-            for (let i = 0; i < data.length; i++) {
-                if (d.properties.gem_name !== null && d.properties.gem_name !== undefined && data[i] !== null && data[i] !== undefined) {
-                        return selectedDD.color
+
+            for (let i = 0; i < partei_starken_Array.length; i++) {
+                if (matcher(d.properties.gem_name.toString().toLowerCase(), "bodensee")){
+                    return cScale(0)
+                }
+                if (data[i] !== undefined && data[i] !== null && matcher(d.properties.gem_name.toString().toLowerCase(), data[i].gemeindeName.toLowerCase())) {
+                    let toNorm, maxValue;
+                    let done= false;
+                    if (isOtherArray) {
+                        let themeArray = translationSelectedTheme(activeIndex)
+                        if (activeIndex === 2) {
+                            if (themeArray[i]!== undefined) {
+                                toNorm = themeArray[i].kindertagesstaetten
+                                maxValue = themeArray[themeArray.length - 1].kindertagesstaetten
+                                done = true;
+                            } else {
+                                return cScale(0)
+                            }
+                        } else if (activeIndex === 3 ){
+                            if (themeArray[i]!== undefined) {
+                                toNorm = themeArray[i].brutto_sozialhilfe_je_einwohner
+                                maxValue = themeArray[themeArray.length - 1].brutto_sozialhilfe_je_einwohner
+                                done = true;
+                            } else {
+                                return cScale(0)
+                            }
+                        } else if (activeIndex === 4 ){
+                            if (themeArray[i]!== undefined) {
+                                toNorm = themeArray[i].gemeindesteuerfuss
+                                maxValue = themeArray[themeArray.length - 1].gemeindesteuerfuss
+                                done =true
+                            } else {
+                                return cScale(0)
+                            }
+
+                        }
+                        else if (activeIndex === 5) {
+                            if (themeArray[i]!== undefined) {
+                                toNorm = themeArray[i].evang
+                                maxValue = themeArray[themeArray.length - 1].evang
+                                done =true
+                            } else {
+                                return cScale(0)
+                            }
+
+                        }
+                        else if (activeIndex === 6) {
+                            if (themeArray[i]!== undefined) {
+                                toNorm = themeArray[i].rom
+                                maxValue = themeArray[themeArray.length - 1].rom
+                                done =true
+                            } else {
+                                return cScale(0)
+                            }
+
+                        }
+                        else if (activeIndex === 7) {
+                            if (themeArray[i]!== undefined) {
+                                toNorm = themeArray[i].ubrige
+                                maxValue = themeArray[themeArray.length - 1].ubrige
+                                done =true
+                            } else {
+                                return cScale(0)
+                            }
+
+                        }
+                    }
+                    if (!isOtherArray || !done){
+
+                        switch (selectedDD.id) {
+                            case 0:
+                                sortData(data, 'svp', true)
+                                toNorm = data[i].parteien.svp.value
+                                maxValue = data[data.length - 1].parteien.svp.value
+                                break;
+                            case 1:
+                                sortData(data, 'sp', true)
+                                toNorm = data[i].parteien.sp.value
+                                maxValue = data[data.length - 1].parteien.sp.value
+                                break;
+                            case 2:
+                                sortData(data, 'fdp', true)
+                                toNorm = data[i].parteien.fdp.value
+                                maxValue = data[data.length - 1].parteien.fdp.value
+                                break;
+                            case 3:
+                                sortData(data, 'gp', true)
+                                toNorm = data[i].parteien.gp.value
+                                maxValue = data[data.length - 1].parteien.gp.value
+                                break;
+                            case 4:
+                                sortData(data, 'cvp', true)
+                                toNorm = data[i].parteien.cvp.value
+                                maxValue = data[data.length - 1].parteien.cvp.value
+                                break;
+                            case 5:
+                                sortData(data, 'glp', true)
+                                toNorm = data[i].parteien.glp.value
+                                maxValue = data[data.length - 1].parteien.glp.value
+                                break;
+                            case 6:
+                                sortData(data, 'evp', true)
+                                toNorm = data[i].parteien.evp.value
+                                maxValue = data[data.length - 1].parteien.evp.value
+                                break;
+                            case 7:sortData(data, 'bdp', true)
+                                toNorm = data[i].parteien.bdp.value
+                                maxValue = data[data.length - 1].parteien.bdp.value
+                                break;
+                            case 8:
+                                sortData(data, 'edu', true)
+                                toNorm = data[i].parteien.edu.value
+                                maxValue = data[data.length - 1].parteien.edu.value
+                                break;
+                            default:
+                                toNorm = 0;
+                                maxValue = 1;
+                        }
+                    }
+
+                    if (toNorm === undefined) {
+                        return cScale(0)
+                    }
+                    let normalized = toNorm/maxValue
+                    if(normalized > 1){
+                        normalized=1;
+                    }
+                    return cScale(100 *normalized)
                 }
             }
+
         })
     }
 
     function toolTipText(selectedDDNumber, d, dropDownVisible) {
         let text
-        let themeArray = translationSelectedTheme(selectedDDNumber)
+        let themeArray = translationSelectedTheme(activeIndex)
         let gemeindeName = d.properties.gem_name;
         for (let i = 0; i < partei_starken_Array.length; i++) {
             if (matcher(gemeindeName.toString().toLowerCase(), partei_starken_Array[i].gemeindeName.toLowerCase())) {
@@ -518,86 +633,107 @@ var scrollVis = function () {
                     case 0: {
                         let svp = partei_starken_Array[i].parteien.svp.value
                         text = gemeindeName + " — " + "svp: " + (svp !== undefined ? (svp) : '0') + "%";
-                        if (!dropDownVisible){
-
-                        }
                         break;
                     }
                     case 1: {
                         let sp = partei_starken_Array[i].parteien.sp.value
                         text = gemeindeName + " — " + "sp: " + (sp !== undefined ? (sp) : '0') + "%";
-                        if (!dropDownVisible) {
-                            if (themeArray[0][i] !== undefined) {
-                                text += "\nKindertagesstätte: " + (themeArray[0][i].kindertagesstaetten === undefined ? 'Keine Daten vorhanden' : themeArray[0][i].kindertagesstaetten);
-                                text += "\nBruttosozial/einwohner: " + (themeArray[1][i].brutto_sozialhilfe_je_einwohner !== undefined ? themeArray[1][i].brutto_sozialhilfe_je_einwohner : '');
-                            }
-                        }
                         break;
                     }
                     case 2: {
                         let fdp = partei_starken_Array[i].parteien.fdp.value
                         text = gemeindeName + " — " + "fdp: " + (fdp !== undefined ? (fdp) : '0') + "%";
-                        if (!dropDownVisible){
-                            text += "\nSteuerfüsse: " + (themeArray[i].gemeindesteuerfuss !== undefined ? themeArray[i].gemeindesteuerfuss: '');
-                        }
                         break;
                     }
                     case 3: {
                         let gp = partei_starken_Array[i].parteien.gp.value
                         text = gemeindeName + " — " + "gp: " + (gp !== undefined ? (gp) : '0') + "%";
-                        if (!dropDownVisible){
-
-                        }
                         break;
                     }
                     case 4: {
                         let cvp = partei_starken_Array[i].parteien.cvp.value
-                        text = gemeindeName + " — " + "cvp: " + (cvp !== undefined ? (cvp) : '0') + "%";
-                        if (!dropDownVisible){
-                            text += "\nKonfessionszugehörigkeit:\n" +
-                                "Evangelisch reformiert: " + (themeArray[i].evang !== undefined ? themeArray[i].evang : "") +
-                                "\nRömisch Katholisch: " + (themeArray[i].rom !== undefined ? themeArray[i].rom : "") +
-                                "\nÜbrige: " + (themeArray[i].ubrige !== undefined ? themeArray[i].ubrige : "")
-                        }
+                        text = gemeindeName + " — "+ "cvp: " + (cvp !== undefined ? (cvp) : '0') + "%";
                         break;
                     }
                     case 5: {
                         let glp = partei_starken_Array[i].parteien.glp.value
                         text = gemeindeName + " — " + "glp: " + (glp !== undefined ? (glp) : '0') + "%";
-                        if (!dropDownVisible){
-
-                        }
                         break;
                     }
                     case 6: {
                         let evp = partei_starken_Array[i].parteien.evp.value
                         text = gemeindeName + " — " + "evp: " + (evp !== undefined ? (evp) : '0') + "%";
-                        if (!dropDownVisible){
-                            text += "\nKonfessionszugehörigkeit:\n" +
-                                "Evangelisch reformiert: " + (themeArray[i].evang !== undefined ? themeArray[i].evang : "") +
-                                "\nRömisch Katholisch: " + (themeArray[i].rom !== undefined ? themeArray[i].rom : "") +
-                                "\nÜbrige: " + (themeArray[i].ubrige !== undefined ? themeArray[i].ubrige : "")
-                        }
                         break;
                     }
                     case 7: {
                         let bdp = partei_starken_Array[i].parteien.bdp.value
                         text = gemeindeName + " — " + "bdp: " + (bdp !== undefined ? (bdp) : '0') + "%";
-                        if (!dropDownVisible){
-
-                        }
                         break;
                     }
                     case 8: {
                         let edu = partei_starken_Array[i].parteien.edu.value
-                        text = gemeindeName + " — " + "edu: " + (edu !== undefined ? (edu) : '0') + "%";
-                        if (!dropDownVisible){
-
-                        }
+                        text = gemeindeName + " — "+ "edu: " + (edu !== undefined ? (edu) : '0') + "%";
                         break;
                     }
                     default: {
                         text = partei_starken_Array[i].gemeindeName
+                    }
+                }
+                switch (activeIndex){
+                    case -1:{
+                        break;
+                    }
+                    case 0:{
+                        break;
+                    }
+                    case 1:{
+                        break;
+                    }
+                    case 2:{ //mapOne
+                        if (themeArray[i] !== undefined) {
+                            text += "\nKindertagesstätte: " + (themeArray[i].kindertagesstaetten === undefined ? 'Keine Daten vorhanden' : themeArray[i].kindertagesstaetten);}
+                        else{
+                            text += "\nKindertagesstätte: " + 'Keine Daten vorhanden';
+                        }
+                        break;
+
+                    }
+
+                    case 3:{ //mapOneAHalf
+                        if (themeArray[i] !== undefined) {
+                            text += "\nBruttosozial/einwohner: " + (themeArray[i].brutto_sozialhilfe_je_einwohner !== undefined ? themeArray[i].brutto_sozialhilfe_je_einwohner : 'Keine Daten vorhanden');
+                        }else{
+                            text += "\nBruttosozial/einwohner: " + 'Keine Daten vorhanden';
+
+                        }
+                        break;
+                    }
+                    case 4:{//MapTwo
+                        if (!dropDownVisible){
+                            text += "\nSteuerfüsse: " + (themeArray[i].gemeindesteuerfuss !== undefined ? themeArray[i].gemeindesteuerfuss: '');
+                        }
+                        break;
+                    }
+                    case 5:{//MApThree
+                        if (!dropDownVisible){
+                            text += "\nKonfessionszugehörigkeit:\n" +
+                                "Evangelisch reformiert: " + (themeArray[i].evang !== undefined ? themeArray[i].evang : "")
+                        }
+                        break;
+                    }
+                    case 6:{//Mapfour
+                        if (!dropDownVisible){
+                            text += "\nKonfessionszugehörigkeit:\n" +
+                                "Römisch Katholisch: " + (themeArray[i].rom !== undefined ? themeArray[i].rom : "")
+                        }
+                        break;
+                    }
+                    case 7:{//Mapfour
+                        if (!dropDownVisible){
+                            text += "\nKonfessionszugehörigkeit:\n" +
+                                "Übrige: " + (themeArray[i].ubrige !== undefined ? themeArray[i].ubrige : "")
+                        }
+                        break;
                     }
                 }
             }
@@ -606,20 +742,65 @@ var scrollVis = function () {
     }
 
     function tooltip(selectedDDNumber, dropDownVisible) {
-        let tooltipP = null;
-
+        let text
         g.selectAll(".map-number1")
-            .on("mouseover", function(e, d) {
-                tooltipP = d3.select('#tooltip').append('p').attr('class', 'tooltip');
+            .on("mouseover", function(e,d) {
                 d3.select('#vis').selectAll('tooltip').remove();
+                tooltipP = d3.select('#tooltip').append('p').attr('class', 'tooltip');
 
-                e.target.attributes.getNamedItem("stroke").value = "#FFF";
+                d3.select("#tooltip").style("opacity", 1)
+
+                if (matcher(d.properties.gem_name.toString().toLowerCase(), "bodensee")){
+                    e.target.attributes.getNamedItem("stroke").value = "#000";
+                    text = "Bodensee"
+
+                }else {
+                    e.target.attributes.getNamedItem("stroke").value = "#FFF";
+                    text = toolTipText(selectedDDNumber, d, dropDownVisible);
+                }
                 e.target.attributes.getNamedItem("stroke-width").value = 5;
 
+                tooltipP
+                    .style('position', 'absolute')
+                    .style('z-index', 10000000)
+                    .style("color", "black")
+                    .style("font-weight", "bold")
+                    .style("white-space", "pre-line")
+                    .style("left", (d3.pointer(e)[0]) - 150 + "px")
+                    .style("top", (d3.pointer(e)[1] - 50) + "px")
+                    .text(text)
             })
 
-            .on("mousemove", function (e,d){
-                let text = toolTipText(selectedDDNumber, d, dropDownVisible);
+            .on("mousemove", function (e){
+                    tooltipP
+                        .style("left", (d3.pointer(e)[0] - 150) + "px")
+                        .style("top", (d3.pointer(e)[1] - 100) + "px")
+            })
+            .on("mouseout", () => {
+                g.selectAll("path").attr("stroke", "#000").attr("stroke-width", "1")
+                tooltipP.remove();
+            })
+/*            .on("click", (e,d) => {
+                g.selectAll("path").attr("stroke", "#000").attr("stroke-width", "1")
+                d3.select('#vis').selectAll('tooltip').remove();
+
+                tooltipP = d3.select('#tooltip').append('p').attr('class', 'tooltip');
+                if (matcher(d.properties.gem_name.toString().toLowerCase(), "bodensee")){
+                    e.target.attributes.getNamedItem("stroke").value = "#000";
+                }else {
+                    e.target.attributes.getNamedItem("stroke").value = "#FFF";
+                }
+                e.target.attributes.getNamedItem("stroke-width").value = 5;
+
+
+
+
+                if (matcher(d.properties.gem_name.toString().toLowerCase(), "bodensee")){
+                    text = "Bodensee"
+                }
+                else {
+                    text = toolTipText(selectedDDNumber, d, dropDownVisible);
+                }
                 d3.select("#tooltip").style("opacity", 1)
 
                 tooltipP
@@ -627,15 +808,13 @@ var scrollVis = function () {
                     .style('z-index', 10000000)
                     .style("color", "black")
                     .style("font-weight", "bold")
-                    .style("left", (d3.pointer(e)[0])+ "px")
-                    .style("top", (d3.pointer(e)[1] -50) + "px")
+                    .style("white-space", "pre-line")
+                    .style("left", (d3.pointer(e)[0]) - 150 + "px")
+                    .style("top", (d3.pointer(e)[1] - 50) + "px")
                     .text(text)
+                console.log(tooltipP)
+            })*/
 
-            })
-            .on("mouseout", (e) => {
-                g.selectAll("path").attr("stroke", "#000").attr("stroke-width", "1")
-                tooltipP.remove();
-            })
     }
     function matcher(one, two){
         one = one.split(' ');
@@ -649,48 +828,52 @@ var scrollVis = function () {
 
     d3.select('#filter').on("change", (e) => {
         currentlySelectedDD = dropDownThemen[e.target.value];
-        switchDropDownData(currentlySelectedDD, true, true);
+        switchDropDownData(currentlySelectedDD, true, false)
+
     });
 
-    function translationSelectedTheme(selectedDropDownID){
-        switch (selectedDropDownID){
-            case 0:{//svp
+    function translationSelectedTheme(sectionNumber){
+        switch (sectionNumber){
+            case -1:{
                 break;
             }
-            case 1:{//sp
-                return [kindertagesstaette_Array, sozAusgabe_Array]
+            case 0:{
+                break;
             }
-            case 2:{ //fdp
+            case 1:{
+                break;
+            }
+            case 2:{ //mapOne
+                return kindertagesstaette_Array
+            }
+
+            case 3:{ //mapOnAhalf
+                return sozAusgabe_Array
+            }
+            case 4:{//MapTwo
                 return steuerfuesse_Array
             }
-            case 3:{//die Grünen
-                break;
-            }
-            case 4:{//cvp
+            case 5:{//MApThree
                 return konfessionszug_Array
             }
-            case 5:{//glp
-                break;
-            }
-            case 6:{//evp
+            case 6:{//Mapfour
                 return konfessionszug_Array
             }
-            case 7:{//bdp
-                break;
+            case 7:{//Mapfour
+                return konfessionszug_Array
             }
-            case 8:{// edu
-                break;
+            default:{
+                return partei_starken_Array
             }
         }
-        return 0
-
+        return partei_starken_Array
     }
 
     function switchDropDownData(selectedDD, showAll, DropDownSectionVisible) {
         try {
-            setFilling(selectedDD)
+            setFilling(selectedDD, !DropDownSectionVisible)
             if (showAll || showAll === undefined) {
-                setOppacity(selectedDD.id);
+                //setOppacity(selectedDD.id);
                 tooltip(selectedDD.id, DropDownSectionVisible);
                 drawScale("colorscale", d3.interpolate("#FFF", selectedDD.color))
             }
@@ -714,7 +897,7 @@ var scrollVis = function () {
                 activateFunctions[i]()
             }
             catch (e){
-                console.log("Scroll to Top and reload Page")
+                window.scroll(top)
             }
         })
         lastIndex = activeIndex;
@@ -730,7 +913,7 @@ var scrollVis = function () {
         try {
         updateFunctions[index](progress);
         } catch (e){
-            console.log("Scroll to Top and reload Page")
+            window.scroll(top)
         }
     };
 
@@ -1034,13 +1217,37 @@ async function fetchingGeneralData(dataset, query, rows, sort) {
     }
     return await fetch(url);
 }
-function sortData(arraySet, field) {
+function sortData(arraySet, field, partei = false) {
+    if (!partei) {
+        return arraySet.sort((a,b) => {
+            /*Prevent undefined to go at the top of the list*/
+            if (a[field] === undefined) {
+                return -1
+            }
+            if (b[field] === undefined) {
+                return 1
+            }
+            return (a[field] - b[field])
+        })
+    }
     return arraySet.sort((a,b) => {
-        return (a[field] - b[field])
+        /*Prevent undefined to go at the top of the list*/
+        if (a.parteien[field].value === undefined) {
+            return -1
+        }
+        if (b.parteien[field].value === undefined) {
+            return 1
+        }
+        return (a.parteien[field].value - b.parteien[field].value)
     })
 }
 
 let set = ["partei_starken", "konfessionszugehoerigkeit", "kindertagesstaette", "steuerfuesse", "sozAusgabe", "auslaenderAnteil_Anteil"]
 fuse(set).then(data => {
     display(data)
+})
+
+window.addEventListener("load", (event) => {
+    let filter = document.getElementById('filter')
+    filter.value = 0
 })
