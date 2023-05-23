@@ -158,12 +158,14 @@ var scrollVis = function () {
     // When scrolling to a new section
     // the activation function for that
     // section is called.
-    var activateFunctions = [function () {}];
+    var activateFunctions = [function () {
+    }];
     // If a section has an update function
     // then it is called while scrolling
     // through the section with the current
     // progress through the section.
-    var updateFunctions = [function (){}];
+    var updateFunctions = [function () {
+    }];
     // Keep track of which visualization
     // we are on and which was the last
     // index activated. When user scrolls
@@ -176,38 +178,38 @@ var scrollVis = function () {
     var activeIndex = 0;
 
     //projection
-    const width = window.innerWidth/2
+    const width = window.innerWidth / 2
     const height = window.innerHeight
-    var margin = { top: 0, left: 20, bottom: 40, right: 20 };
+    var margin = {top: 0, left: 20, bottom: 40, right: 20};
 
 
     var chart = function (selection) {
-            selection.each(function (APIData) {
-                // create svg and give it a width and height
-                svg = d3.select(this).selectAll('svg').data([APIData]);
-                var svgE = svg.enter().append('svg');
-                // @v4 use merge to combine enter and existing selection
-                svg = svg.merge(svgE);
-                svg.attr('width', width + margin.left + margin.right);
-                svg.attr('height', height + margin.top + margin.bottom);
+        selection.each(function (APIData) {
+            // create svg and give it a width and height
+            svg = d3.select(this).selectAll('svg').data([APIData]);
+            var svgE = svg.enter().append('svg');
+            // @v4 use merge to combine enter and existing selection
+            svg = svg.merge(svgE);
+            svg.attr('width', width + margin.left + margin.right);
+            svg.attr('height', height + margin.top + margin.bottom);
 
-                svg.attr("viewBox", "0 0 " + width + " " + height)
-                svg.append('g');
+            svg.attr("viewBox", "0 0 " + width + " " + height)
+            svg.append('g');
 
 
-                // this group element will be used to contain all
-                // other elements.
-                g = svg.select('g')
-                    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+            // this group element will be used to contain all
+            // other elements.
+            g = svg.select('g')
+                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-                d3.json("resources/geojson/thurgau-gemeinde.geojson").then(GeoData => {
-                    const projection = d3.geoMercator().fitSize([width, height], GeoData)
-                    path = d3.geoPath().projection(projection);
-                    setupVis(GeoData);
-                    setupSections();
-                });
+            d3.json("resources/geojson/thurgau-gemeinde.geojson").then(GeoData => {
+                const projection = d3.geoMercator().fitSize([width, height], GeoData)
+                path = d3.geoPath().projection(projection);
+                setupVis(GeoData);
+                setupSections();
             });
-      //  });
+        });
+        //  });
     };
     var setupVis = function (gemeindeData) {
 
@@ -218,7 +220,7 @@ var scrollVis = function () {
             .attr('x', width / 2)
             .attr('y', height / 9)
             .attr("font-size", () => {
-                return width/10
+                return width / 10
             })
             .text('2023');
 
@@ -227,11 +229,9 @@ var scrollVis = function () {
             .attr('x', width / 2)
             .attr('y', (height / 9) + (height / 7))
             .attr("font-size", () => {
-                return width/15
+                return width / 15
             })
             .text('OpenData Visualisierung');
-
-
 
 
         var mapE = g.selectAll("path")
@@ -243,7 +243,7 @@ var scrollVis = function () {
             .attr("d", path)
             .attr("stroke", "#000")
             .attr("stroke-width", 1)
-            .attr("fill",switchDropDownData(currentlySelectedDD, false, false))
+            .attr("fill", switchDropDownData(currentlySelectedDD, false, false))
             .style("visibility", "hidden")
         /*            .attr("id", (d,i) => {
                         return "mapPath" + i
@@ -276,7 +276,6 @@ var scrollVis = function () {
         })*/
 
 
-
     }
     var setupSections = function () {
 
@@ -290,6 +289,7 @@ var scrollVis = function () {
         activateFunctions[5] = showMapFour;
         activateFunctions[6] = showMapFive;
         activateFunctions[7] = showMapSix;
+        activateFunctions[8] = showMapSeven;
 
 
         // updateFunctions are called while
@@ -299,10 +299,10 @@ var scrollVis = function () {
         // for all scrolling and so are set to
         // no-op functions.
         for (var i = 0; i < 9; i++) {
-            updateFunctions[i] = function () {};
+            updateFunctions[i] = function () {
+            };
         }
     };
-
 
 
     function showTitle() {
@@ -326,15 +326,17 @@ var scrollVis = function () {
             .transition()
             .duration(0)
             .style("visibility", "visible")
-            .attr("fill",switchDropDownData(currentlySelectedDD, true, true))
+            .attr("fill", switchDropDownData(currentlySelectedDD, true, true))
     }
 
     function showMapTwo() {
         switchDropDownData(currentlySelectedDD, true, false)
     }
+
     function showMapTwoAHalf() {
         switchDropDownData(currentlySelectedDD, true, false)
     }
+
     function showMapThree() {
         switchDropDownData(currentlySelectedDD, true, false)
     }
@@ -342,12 +344,18 @@ var scrollVis = function () {
     function showMapFour() {
         switchDropDownData(currentlySelectedDD, true, false)
     }
+
     function showMapFive() {
         switchDropDownData(currentlySelectedDD, true, false)
     }
+
     function showMapSix() {
         switchDropDownData(currentlySelectedDD, true, false)
     }
+    function showMapSeven() {
+        switchDropDownData(currentlySelectedDD, true, false)
+    }
+
     /*
     function setOppacity(selectedDDNumber){
             g.selectAll(".map-number1")
@@ -427,18 +435,18 @@ var scrollVis = function () {
 
         var cScale = d3.scaleSequential()
             .interpolator(interpolator)
-            .domain([0,99]);
+            .domain([0, 99]);
 
         var xScale = d3.scaleLinear()
-            .domain([0,99])
-            .range([100, width-100]);
+            .domain([0, 99])
+            .range([100, width - 100]);
         d3.select("#" + id).style("opacity", 1)
-        if (u !== null){
+        if (u !== null) {
             u.transition().duration(0).style("background-color", (d) => {
                 let c = cScale(d)
                 return c
             })
-        }else {
+        } else {
             u = d3.select("#" + id)
                 .selectAll("rect")
                 .data(data)
@@ -464,7 +472,7 @@ var scrollVis = function () {
 
             d3.select("#" + id).append("text")
                 .style('position', 'absolute')
-                .style("top", (innerHeight / 9)-30 + "px")
+                .style("top", (innerHeight / 9) - 30 + "px")
                 .style("left", Math.floor(xScale(0)) + "px")
                 .attr("font-size", 20)
                 .attr("fill", "red")
@@ -472,8 +480,8 @@ var scrollVis = function () {
 
             d3.select("#" + id).append("text")
                 .style('position', 'absolute')
-                .style("top", (innerHeight / 9)-30 + "px")
-                .style("left", Math.floor(xScale(100))-39 + "px")
+                .style("top", (innerHeight / 9) - 30 + "px")
+                .style("left", Math.floor(xScale(100)) - 39 + "px")
                 .attr("font-size", 20)
                 .attr("fill", "red")
                 .text("100%");
@@ -486,77 +494,83 @@ var scrollVis = function () {
 
         var cScale = d3.scaleSequential()
             .interpolator(interpolator)
-            .domain([0,99]);
+            .domain([0, 99]);
 
         g.selectAll(".map-number1").style("fill", (d) => {
 
             for (let i = 0; i < partei_starken_Array.length; i++) {
-                if (matcher(d.properties.gem_name.toString().toLowerCase(), "bodensee")){
+                if (matcher(d.properties.gem_name.toString().toLowerCase(), "bodensee")) {
                     return cScale(0)
                 }
                 if (data[i] !== undefined && data[i] !== null && matcher(d.properties.gem_name.toString().toLowerCase(), data[i].gemeindeName.toLowerCase())) {
                     let toNorm, maxValue;
-                    let done= false;
+                    let done = false;
                     if (isOtherArray) {
                         let themeArray = translationSelectedTheme(activeIndex)
                         if (activeIndex === 2) {
-                            if (themeArray[i]!== undefined) {
+                            if (themeArray[i] !== undefined) {
                                 toNorm = themeArray[i].kindertagesstaetten
                                 maxValue = themeArray[themeArray.length - 1].kindertagesstaetten
                                 done = true;
                             } else {
                                 return cScale(0)
                             }
-                        } else if (activeIndex === 3 ){
-                            if (themeArray[i]!== undefined) {
+                        } else if (activeIndex === 3) {
+                            if (themeArray[i] !== undefined) {
                                 toNorm = themeArray[i].brutto_sozialhilfe_je_einwohner
                                 maxValue = themeArray[themeArray.length - 1].brutto_sozialhilfe_je_einwohner
                                 done = true;
                             } else {
                                 return cScale(0)
                             }
-                        } else if (activeIndex === 4 ){
-                            if (themeArray[i]!== undefined) {
+                        } else if (activeIndex === 4) {
+                            if (themeArray[i] !== undefined) {
                                 toNorm = themeArray[i].gemeindesteuerfuss
                                 maxValue = themeArray[themeArray.length - 1].gemeindesteuerfuss
-                                done =true
+                                done = true
                             } else {
                                 return cScale(0)
                             }
 
-                        }
-                        else if (activeIndex === 5) {
-                            if (themeArray[i]!== undefined) {
+                        } else if (activeIndex === 5) {
+                            if (themeArray[i] !== undefined) {
                                 toNorm = themeArray[i].evang
                                 maxValue = themeArray[themeArray.length - 1].evang
-                                done =true
+                                done = true
                             } else {
                                 return cScale(0)
                             }
 
-                        }
-                        else if (activeIndex === 6) {
-                            if (themeArray[i]!== undefined) {
+                        } else if (activeIndex === 6) {
+                            if (themeArray[i] !== undefined) {
                                 toNorm = themeArray[i].rom
                                 maxValue = themeArray[themeArray.length - 1].rom
-                                done =true
+                                done = true
                             } else {
                                 return cScale(0)
                             }
 
-                        }
-                        else if (activeIndex === 7) {
-                            if (themeArray[i]!== undefined) {
+                        } else if (activeIndex === 7) {
+                            if (themeArray[i] !== undefined) {
                                 toNorm = themeArray[i].ubrige
                                 maxValue = themeArray[themeArray.length - 1].ubrige
-                                done =true
+                                done = true
+                            } else {
+                                return cScale(0)
+                            }
+
+                        } else if (activeIndex === 8) {
+                            if (themeArray[i] !== undefined) {
+                                toNorm = themeArray[i].auslaenderanteil
+                                maxValue = themeArray[themeArray.length - 1].auslaenderanteil
+                                done = true
                             } else {
                                 return cScale(0)
                             }
 
                         }
                     }
-                    if (!isOtherArray || !done){
+                    if (!isOtherArray || !done) {
 
                         switch (selectedDD.id) {
                             case 0:
@@ -594,7 +608,8 @@ var scrollVis = function () {
                                 toNorm = data[i].parteien.evp.value
                                 maxValue = data[data.length - 1].parteien.evp.value
                                 break;
-                            case 7:sortData(data, 'bdp', true)
+                            case 7:
+                                sortData(data, 'bdp', true)
                                 toNorm = data[i].parteien.bdp.value
                                 maxValue = data[data.length - 1].parteien.bdp.value
                                 break;
@@ -612,15 +627,51 @@ var scrollVis = function () {
                     if (toNorm === undefined) {
                         return cScale(0)
                     }
-                    let normalized = toNorm/maxValue
-                    if(normalized > 1){
-                        normalized=1;
+                    let normalized = toNorm / maxValue
+                    if (normalized > 1) {
+                        normalized = 1;
                     }
-                    return cScale(100 *normalized)
+                    return cScale(100 * normalized)
                 }
             }
 
         })
+    }
+
+    function pcorr(ArrX, partei, ArrY, sectionNumber) {
+        let sectionName = getSectionName(sectionNumber);
+        if (ArrX === ArrY){
+            throw "sameArray"
+        }
+        let x = [], y =[];
+        let sumX = 0,
+            sumY = 0,
+            sumXY = 0,
+            sumX2 = 0,
+            sumY2 = 0;
+        for (let i=0; i<ArrX.length;i++){
+            //console.log(ArrX[i].parteien[partei].value)
+            if(ArrX[i].parteien[partei].value !== undefined) {
+                x.push(parseFloat(ArrX[i].parteien[partei].value));
+            }
+        }
+        for (let j=0; j<ArrY.length; j++) {
+            //console.log(ArrY[j][sectionName])
+            if (ArrY[j][sectionName] !== undefined) {
+                y.push(parseFloat(ArrY[j][sectionName]));
+            }
+        }
+        const minLength = x.length = y.length = Math.min(x.length, y.length),
+            reduce = (xi, idx) => {
+                const yi = y[idx];
+                sumX += xi;
+                sumY += yi;
+                sumXY += xi * yi;
+                sumX2 += xi * xi;
+                sumY2 += yi * yi;
+            }
+        x.forEach(reduce);
+        return (minLength * sumXY - sumX * sumY) / Math.sqrt((minLength * sumX2 - sumX * sumX) * (minLength * sumY2 - sumY * sumY));
     }
 
     function toolTipText(selectedDDNumber, d, dropDownVisible) {
@@ -735,6 +786,13 @@ var scrollVis = function () {
                         }
                         break;
                     }
+                    case 8:{//MapFive
+                        if (!dropDownVisible){
+                            text += "\nAusländeranteil:\n" +
+                                "Anteil in % : " + (themeArray[i].auslaenderanteil !== undefined ? ((Math.floor(themeArray[i].auslaenderanteil*100)) + "%") : "")
+                        }
+                        break;
+                    }
                 }
             }
         }
@@ -832,6 +890,41 @@ var scrollVis = function () {
 
     });
 
+    function getSectionName(sectionNumber){
+        switch (sectionNumber) {
+            case -1:{
+                break;
+            }
+            case 0:{
+                break;
+            }
+            case 1:{
+                break;
+            }
+            case 2: {
+                return "kindertagesstaetten"
+            }
+            case 3:{ //mapOnAhalf
+                return "brutto_sozialhilfe_je_einwohner"
+            }
+            case 4:{//MapTwo
+                return "gemeindesteuerfuss"
+            }
+            case 5:{//MApThree
+                return "evang"
+            }
+            case 6:{//Mapfour
+                return "rom"
+            }
+            case 7:{//Mapfour
+                return "ubrige"
+            }
+            case 8:{//Mapfour
+                return "auslaenderanteil"
+            }
+        }
+        return "partei"
+    }
     function translationSelectedTheme(sectionNumber){
         switch (sectionNumber){
             case -1:{
@@ -862,15 +955,29 @@ var scrollVis = function () {
             case 7:{//Mapfour
                 return konfessionszug_Array
             }
+            case 8:{//MapFive
+                return auslaenderAnteil_Anteil
+            }
             default:{
                 return partei_starken_Array
             }
         }
         return partei_starken_Array
     }
+    function changeTextForSections(){
+        try {
+            let R = pcorr(partei_starken_Array, currentlySelectedDD.name, translationSelectedTheme(activeIndex), activeIndex);
+            console.log('R', R);
+        }
+        catch (e){
+            console.log(e)
+        }
+
+    }
 
     function switchDropDownData(selectedDD, showAll, DropDownSectionVisible) {
         try {
+            changeTextForSections()
             setFilling(selectedDD, !DropDownSectionVisible)
             if (showAll || showAll === undefined) {
                 //setOppacity(selectedDD.id);
