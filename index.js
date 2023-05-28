@@ -4,6 +4,10 @@ let summeEvang,summeRom,summeUbrige, summeKonfessionsAngehorige,
     summeAusländer,
     summeBevolkerung;
 
+let currentMaxValue = "100%"
+let currentMinValue = "0%"
+
+
 let partei_starken_Array = [
     {
         'gemeindeName': "",
@@ -358,48 +362,6 @@ function sortData(arraySet, field, partei = false) {
         return (a.parteien[field].value - b.parteien[field].value)
     })
 }
-const dropDownThemen = [
-    {
-        id: 0,
-        name: "svp",
-        color: '#008C43'
-    },
-    {
-        id: 1,
-        name: "sp",
-        color: '#F40022'
-
-    },
-    {
-        id: 2,
-        name: "fdp",
-        color: '#104FA0'
-    },
-    {
-        id: 3,
-        name: "gp",
-        color: '#85B514'
-    },
-    {
-        id: 4,
-        name: "cvp",
-        color: '#FF9B00'
-    },
-    {
-        id: 5,
-        name: "glp",
-        color: '#9BCF2D'
-    },
-    {
-        id: 6,
-        name: "evp",
-        color: '#F7DA00'
-    }
-]
-let currentlySelectedDD = dropDownThemen[0];
-
-let currentMaxValue = "100%"
-let currentMinValue = "0%"
 var scrollVis = function () {
     // main svg used for visualization
     let tooltipP = null;
@@ -407,19 +369,12 @@ var scrollVis = function () {
     var svg = null;
     // d3 selection that will be used
     // for displaying visualizations
-    var u = null;
     var g = null;
     var path = null;
     // When scrolling to a new section
     // the activation function for that
     // section is called.
     var activateFunctions = [function () {
-    }];
-    // If a section has an update function
-    // then it is called while scrolling
-    // through the section with the current
-    // progress through the section.
-    var updateFunctions = [function () {
     }];
     // Keep track of which visualization
     // we are on and which was the last
@@ -457,7 +412,7 @@ var scrollVis = function () {
             g = svg.select('g')
                 .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-            d3.json("../geojson/thurgau-gemeinde.geojson").then(GeoData => {
+            d3.json("resources/geojson/thurgau-gemeinde.geojson").then(GeoData => {
                 const projection = d3.geoMercator().fitSize([width, height], GeoData)
                 path = d3.geoPath().projection(projection);
                 setupVis(GeoData);
@@ -498,32 +453,38 @@ var scrollVis = function () {
             .attr("d", path)
             .attr("stroke", "#000")
             .attr("stroke-width", 1)
-            .attr("fill", switchDropDownData(currentlySelectedDD, false, false))
+            .attr("fill", switchDropDownData(    {
+                id: 0,
+                name: "svp",
+                color: '#008C43'
+            }, "Ausländeranteil"))
             .style("visibility", "hidden")
 
-        g.selectAll("#colorscale").style("opacity", 0)
+
+                g.select("#nav")
+            .attr("class", "conclusion")
+            .attr('opacity', 0);
+
+
     }
     var setupSections = function () {
 
         // activateFunctions are called each
         // time the active section changes
         activateFunctions[0] = showTitle;
-        activateFunctions[1] = showMapOne;
-        activateFunctions[2] = showMapTwo;
-        activateFunctions[3] = showMapTwoAHalf;
-        activateFunctions[4] = showMapThree;
-        activateFunctions[5] = showMapFour;
-        activateFunctions[6] = showMapFive;
-        activateFunctions[7] = showMapSix;
-        activateFunctions[8] = showMapSeven;
-
-
-        // updateFunctions are called while
-        // in a particular section to update
-        // the scroll progress in that section.
-        // Most sections do not need to be updated
-        // for all scrolling and so are set to
-        // no-op functions.
+        activateFunctions[1] = showMap1;
+        activateFunctions[2] = showMap2;
+        activateFunctions[3] = showMap3;
+        activateFunctions[4] = showMap4;
+        activateFunctions[5] = showMap5;
+        activateFunctions[6] = showMap6;
+        activateFunctions[7] = showMap7;
+        activateFunctions[8] = showMap8;
+        activateFunctions[9] = showMap9;
+        activateFunctions[10] = showMap10;
+        activateFunctions[11] = showMap11;
+        activateFunctions[12] = showMap12;
+        activateFunctions[13] = showConclusion;
     };
 
 
@@ -531,7 +492,7 @@ var scrollVis = function () {
         g.selectAll("path")
             .style("visibility", "hidden")
         d3.select("#tooltip").style("opacity", 0)
-        d3.select("#colorscale").style("opacity", 0)
+        d3.select("#switch").style("opacity", 0)
 
         g.selectAll('.openvis-title')
             .transition()
@@ -539,7 +500,7 @@ var scrollVis = function () {
             .attr('opacity', 1.0);
     }
 
-    function showMapOne() {
+    function showMap1() {
         g.selectAll('.openvis-title')
             .transition()
             .duration(0)
@@ -548,121 +509,130 @@ var scrollVis = function () {
             .transition()
             .duration(0)
             .style("visibility", "visible")
-            .attr("fill", switchDropDownData(currentlySelectedDD, true, true))
+            .attr("fill", switchDropDownData({
+                id: 0,
+                name: "svp",
+                color: '#008C43'
+            }, "Ausländeranteil"))
     }
 
-    function showMapTwo() {
-        switchDropDownData(currentlySelectedDD, true, false)
+    function showMap5() {
+        switchDropDownData({
+            id: 0,
+            name: "svp",
+            color: '#008C43'
+        }, "Kitaplätze")
+    }
+    function showMap8() {
+        switchDropDownData({
+            id: 0,
+            name: "svp",
+            color: '#008C43'
+        }, "Sozialhilfe")
+    }
+    function showMap2() {
+        switchDropDownData({
+            id: 1,
+            name: "sp",
+            color: '#F40022'
+        }, "Ausländeranteil")
+    }
+    function showMap6() {
+        switchDropDownData({
+            id: 1,
+            name: "sp",
+            color: '#F40022'
+        },  "Kitaplätze")
+    }
+    function showMap9() {
+        switchDropDownData({
+            id: 1,
+            name: "sp",
+            color: '#F40022'
+        }, "Sozialhilfe")
+    }
+    function showMap3() {
+        switchDropDownData({
+            id: 2,
+            name: "fdp",
+            color: '#104FA0'
+        }, "Ausländeranteil")
+    }
+    function showMap7() {
+        switchDropDownData({
+            id: 2,
+            name: "fdp",
+            color: '#104FA0'
+        }, "Kitaplätze")
+    }
+    function showMap10() {
+        switchDropDownData({
+            id: 2,
+            name: "fdp",
+            color: '#104FA0'
+        }, "Gemeindesteuerfüsse")
+    }
+    function showMap4() {
+        switchDropDownData({
+            id: 3,
+            name: "gp",
+            color: '#85B514'
+        },  "Ausländeranteil")
+    }
+    function showMap11() {
+        switchDropDownData({
+            id: 4,
+            name: "cvp",
+            color: '#FF9B00'
+        }, "Konfession(Römisch-Katholisch)")
+    }
+    function showMap12() {
+
+        g.selectAll('.conclusion')
+            .transition()
+            .duration(0)
+            .attr('opacity', 0);
+
+        g.selectAll("path")
+            .transition()
+            .duration(0)
+            .style("visibility", "visible")
+            .attr("fill",         switchDropDownData(    {
+                id: 4,
+                name: "cvp",
+                color: '#FF9B00'
+            }, "Konfession(Evangelisch-reformiert)"))
+
+        document.getElementById("nextSectionButton").classList.add("d-none")
+    }
+    function showConclusion() {
+        g.selectAll("path")
+            .style("visibility", "hidden")
+        d3.select("#tooltip").style("opacity", 0)
+
+        g.selectAll('.conclusion')
+            .transition()
+            .duration(0)
+            .attr('opacity', 1.0);
+        d3.select("#switch").style("opacity", 1)
+
+        document.getElementById("nextSectionButton").classList.remove("d-none")
+
     }
 
-    function showMapTwoAHalf() {
-        switchDropDownData(currentlySelectedDD, true, false)
-    }
+    function setFilling(selectedPartei,topic) {
+        let count0=0,count1=0,count2=0,count3=0,count4=0,count5 =0;
 
-    function showMapThree() {
-        switchDropDownData(currentlySelectedDD, true, false)
-    }
-
-    function showMapFour() {
-        switchDropDownData(currentlySelectedDD, true, false)
-    }
-
-    function showMapFive() {
-        switchDropDownData(currentlySelectedDD, true, false)
-    }
-
-    function showMapSix() {
-        switchDropDownData(currentlySelectedDD, true, false)
-    }
-    function showMapSeven() {
-        switchDropDownData(currentlySelectedDD, true, false)
-    }
-
-    function drawScale(id, interpolator) {
-        let maxPercentElement =  document.getElementById('text100');
-        let minPercentElement = document.getElementById('text0')
-        if (maxPercentElement) {
-            maxPercentElement.innerHTML = currentMaxValue
-            minPercentElement.innerHTML = currentMinValue
-        }
-        var data = Array.from(Array(100).keys());
-
-        var cScale = d3.scaleSequential()
-            .interpolator(interpolator)
-            .domain([0, 99]);
-
-        var xScale = d3.scaleLinear()
-            .domain([0, 99])
-            .range([100, width - 100]);
-        d3.select("#" + id).style("opacity", 1)
-        if (u !== null) {
-            u.transition().duration(0).style("background-color", (d) => {
-                let c = cScale(d)
-                return c
-            })
-        } else {
-            u = d3.select("#" + id)
-                .selectAll("rect")
-                .data(data)
-                .enter()
-                .append("rect")
-                .attr("class", "colorscale")
-                .style('position', 'absolute')
-                .style("left", (d) => Math.floor(xScale(d)) + "px")
-                .style("top", innerHeight / 9 + "px")
-                .style("height", 40 + "px")
-                .style("width", (d) => {
-                    if (d === 99) {
-                        return 6 + "px";
-                    }
-                    return (Math.floor(xScale(d + 1)) - Math.floor(xScale(d)) + 1) + "px";
-                })
-                //instead of filling.. nur e zwüschelösig
-                .style("background-color", (d) => {
-                    let c = cScale(d)
-                    return c
-                })
-                .style("border", "1px solid black")
-
-            d3.select("#" + id).append("text")
-                .style('position', 'absolute')
-                .style("top", (innerHeight / 9) - 30 + "px")
-                .style("left", Math.floor(xScale(0)) + "px")
-                .attr("font-size", 20)
-                .attr("fill", "red")
-                .attr("id", "text0")
-                .text(currentMinValue);
-
-            d3.select("#" + id).append("text")
-                .style('position', 'absolute')
-                .style("top", (innerHeight / 9) - 30 + "px")
-                .style("left", Math.floor(xScale(100)) - 39 + "px")
-                .attr("font-size", 20)
-                .attr("fill", "red")
-                .attr("id", "text100")
-                .text(currentMaxValue);
-
-        }
-    }
-
-    function setFilling(selectedDD, isOtherArray) {
         let data = partei_starken_Array;
-        let interpolator = d3.interpolate("#FFF", selectedDD.color)
+        let interpolator = d3.interpolate("#FFF", selectedPartei.color)
 
         var cScale = d3.scaleSequential()
             .interpolator(interpolator)
             .domain([0, 99]);
-        if (activeIndex === 5) {
-            konfessionszug_Array = sortData(konfessionszug_Array, "evang")
-        }
-        if (activeIndex === 6) {
-            konfessionszug_Array = sortData(konfessionszug_Array, "rom")
-        }
-        if (activeIndex === 7) {
-            konfessionszug_Array = sortData(konfessionszug_Array, "ubrige")
-        }
 
         g.selectAll(".map-number1").style("fill", (d) => {
+            let normArray =[]
+            let toBeUsedInComp = []
 
             for (let i = 0; i < partei_starken_Array.length; i++) {
                 if (matcher(d.properties.gem_name.toString().toLowerCase(), "bodensee")) {
@@ -670,130 +640,16 @@ var scrollVis = function () {
                 }
                 if (data[i] !== undefined && data[i] !== null && matcher(d.properties.gem_name.toString().toLowerCase(), data[i].gemeindeName.toLowerCase())) {
                     let toNorm, maxValue;
-                    let done = false;
-                    if (isOtherArray) {
-                        let themeArray = translationSelectedTheme(activeIndex)
-                        if (activeIndex === 2) {
-                            if (themeArray[i] !== undefined) {
-                                toNorm = themeArray[i].kindertagesstaetten
-                                maxValue = themeArray[themeArray.length - 1].kindertagesstaetten
-                                done = true;
-                                currentMaxValue = ((maxValue / summeTagesstätte) * 100).toFixed(2) + "%"
-                                currentMinValue = "0%"
-                            } else {
-                                return cScale(0)
-                            }
-                        } else if (activeIndex === 3) {
-                            if (themeArray[i] !== undefined) {
-                                toNorm = themeArray[i].brutto_sozialhilfe_je_einwohner
-                                maxValue = themeArray[themeArray.length - 1].brutto_sozialhilfe_je_einwohner
-                                done = true;
-                                currentMaxValue = maxValue
-                                currentMinValue = 0
-                            } else {
-                                return cScale(0)
-                            }
-                        } else if (activeIndex === 4) {
-                            if (themeArray[i] !== undefined) {
-                                toNorm = themeArray[i].gemeindesteuerfuss
-                                maxValue = themeArray[themeArray.length - 1].gemeindesteuerfuss
-                                done = true
-                                currentMaxValue = ((maxValue / summeSteuerfusse) * 100).toFixed(2) + "%"
-                                currentMinValue = "0%"
-                            } else {
-                                return cScale(0)
-                            }
-
-                        } else if (activeIndex === 5) {
-                            if (themeArray[i] !== undefined) {
-                                toNorm = themeArray[i].evang
-                                maxValue = themeArray[themeArray.length - 1].evang
-                                done = true
-                                currentMaxValue = ((maxValue / summeEvang) * 100).toFixed(2) + "%"
-                                currentMinValue = "0%"
-                            } else {
-                                return cScale(0)
-                            }
-
-                        } else if (activeIndex === 6) {
-                            if (themeArray[i] !== undefined) {
-                                toNorm = themeArray[i].rom
-                                maxValue = themeArray[themeArray.length - 1].rom
-                                done = true
-                                currentMaxValue = ((maxValue / summeRom) * 100).toFixed(2) + "%"
-                                currentMinValue = "0%"
-                            } else {
-                                return cScale(0)
-                            }
-
-                        } else if (activeIndex === 7) {
-                            if (themeArray[i] !== undefined) {
-                                toNorm = themeArray[i].ubrige
-                                maxValue = themeArray[themeArray.length - 1].ubrige
-                                done = true
-                                currentMaxValue = ((maxValue / summeUbrige) * 100).toFixed(2) + "%"
-                                currentMinValue = "0%"
-                            } else {
-                                return cScale(0)
-                            }
-
-                        } else if (activeIndex === 8) {
-                            if (themeArray[i] !== undefined) {
-                                toNorm = themeArray[i].auslaenderanteil
-                                maxValue = themeArray[themeArray.length - 1].auslaenderanteil
-                                done = true
-                                currentMaxValue = (maxValue*100).toFixed(2) + "%"
-                                currentMinValue = "0%"
-                            } else {
-                                return cScale(0)
-                            }
-
-                        }
+                    let themeArray = sortData(translationSelectedTheme(activeIndex), getSectionName(activeIndex),false)
+                    if (themeArray === -1 || getSectionName(activeIndex) === -1){
+                        throw "SectionNotAvailable"
                     }
-                    if (!isOtherArray || !done) {
-
-                        switch (selectedDD.id) {
-                            case 0:
-                                sortData(data, 'svp', true)
-                                toNorm = data[i].parteien.svp.value
-                                maxValue = data[data.length - 1].parteien.svp.value
-                                break;
-                            case 1:
-                                sortData(data, 'sp', true)
-                                toNorm = data[i].parteien.sp.value
-                                maxValue = data[data.length - 1].parteien.sp.value
-                                break;
-                            case 2:
-                                sortData(data, 'fdp', true)
-                                toNorm = data[i].parteien.fdp.value
-                                maxValue = data[data.length - 1].parteien.fdp.value
-                                break;
-                            case 3:
-                                sortData(data, 'gp', true)
-                                toNorm = data[i].parteien.gp.value
-                                maxValue = data[data.length - 1].parteien.gp.value
-                                break;
-                            case 4:
-                                sortData(data, 'cvp', true)
-                                toNorm = data[i].parteien.cvp.value
-                                maxValue = data[data.length - 1].parteien.cvp.value
-                                break;
-                            case 5:
-                                sortData(data, 'glp', true)
-                                toNorm = data[i].parteien.glp.value
-                                maxValue = data[data.length - 1].parteien.glp.value
-                                break;
-                            case 6:
-                                sortData(data, 'evp', true)
-                                toNorm = data[i].parteien.evp.value
-                                maxValue = data[data.length - 1].parteien.evp.value
-                                break;
-                            default:
-                                toNorm = 0;
-                                maxValue = 1;
-                        }
-                        currentMaxValue = maxValue.toFixed(2) + "%"
-                        currentMinValue = "0%"
+                    if (themeArray[i] !== undefined) {
+                        toNorm = themeArray[i][getSectionName(activeIndex)]
+                        maxValue = themeArray[themeArray.length - 1][getSectionName(activeIndex)]
+                    }
+                     else {
+                        return cScale(0)
                     }
 
                     if (toNorm === undefined) {
@@ -803,20 +659,118 @@ var scrollVis = function () {
                     if (normalized > 1) {
                         normalized = 1;
                     }
-                    return cScale(100* normalized)
+                    //erklärung 3. methode:
+                    // korrelationsfaktor * (normWert+/-parteistärke)
+                    // wenn diff/summe gross => skaliert stärker
+                    // wenn diff/summe klein => weniger
+                    //+/- => ? welches die bessere wahl, denke summe
+
+                    let c
+                    if(selectedPartei.name === "svp") {
+                        c = ((1-normalized)*partei_starken_Array[i].parteien[selectedPartei.name].value*2)
+                    }
+                    if(selectedPartei.name === "sp") {
+                        if (topic === "Ausländeranteil") {
+                            c = ((normalized)*partei_starken_Array[i].parteien[selectedPartei.name].value*6)
+                        }
+                        if (topic === "Sozialhilfe") {
+                            c = ((normalized)*partei_starken_Array[i].parteien[selectedPartei.name].value*7)
+                        }
+                    }
+                    if(selectedPartei.name === "gp" && topic ==="Ausländeranteil") {
+                        c = ((normalized)*partei_starken_Array[i].parteien[selectedPartei.name].value*10)
+                    }
+                    if(selectedPartei.name === "fdp") {
+                        c = ((normalized)*partei_starken_Array[i].parteien[selectedPartei.name].value*9)
+                    }
+                    if (selectedPartei.name === "cvp") {
+                        if (topic === "Konfession(Römisch-Katholisch)") {
+                            c = ((normalized)*partei_starken_Array[i].parteien[selectedPartei.name].value*10)
+                        }
+                        if (topic === "Konfession(Evangelisch-reformiert)") {
+                            c = ((1-normalized)*partei_starken_Array[i].parteien[selectedPartei.name].value*3)
+                        }
+                    }
+
+                    if (c < 0){
+                        c*=-1
+                    }
+                    //console.log(c, partei_starken_Array[i].gemeindeName)
+                    return cScale(10+c);
+
+
+                    //normArray.push({"value": normalized, "gemeindeName": partei_starken_Array[i].gemeindeName});
                 }
             }
 
+           /* normArray = sortData(normArray, "value", false)
+            toBeUsedInComp = sortData(partei_starken_Array, selectedPartei.name,true)
+            for (let i = 0; i < toBeUsedInComp.length; i++) {
+                for (let j = 0; j<normArray.length; j++){
+                    if (matcher(toBeUsedInComp[i].gemeindeName, normArray[j].gemeindeName)) {
+
+                        /!*console.log("i: "+i + "\t" + toBeUsedInComp[i].parteien[selectedPartei.name].value)
+                        console.log("j: "+j+ "\t" + 100*normArray[j].value)
+*!/let c =0;
+let s=1
+                        if (100*normArray[j].value < toBeUsedInComp[i].parteien[selectedPartei.name].value){
+                           /!* console.log(100*normArray[j].value +"\t<\t"+ toBeUsedInComp[i].parteien[selectedPartei.name].value)
+                            console.log(100*((100*normArray[j].value)/(toBeUsedInComp[i].parteien[selectedPartei.name].value)))
+*!/
+                            c += (100*((normArray[j].value*s* 100)/(toBeUsedInComp[i].parteien[selectedPartei.name].value)))
+                        }
+                        else if ((100*normArray[j].value >toBeUsedInComp[i].parteien[selectedPartei.name].value)){
+  /!*                          console.log(100*normArray[j].value +"\t>=\t"+ (toBeUsedInComp[i].parteien[selectedPartei.name].value))
+                            console.log(100*(toBeUsedInComp[i].parteien[selectedPartei.name].value/(100*normArray[j].value)))
+  *!/
+                            c += (100*((s*toBeUsedInComp[i].parteien[selectedPartei.name].value) / (normArray[j].value*100)))
+                        }
+
+                        if (c<40){
+                            c*=2
+                        }
+
+                        if (c < 20){
+                            count0++
+                            console.log("<10")
+                        }
+                        else if (c < 40){
+                            count1++
+                            console.log("20<40")
+                        }
+                        else if (c < 60){
+                            count2++
+                            console.log("40<60")
+                        }
+                        else if (c < 80){
+                            count3++
+                            console.log("60<80")
+                        }
+                        else if (c <100){
+                            count4++
+                            console.log("80<100")
+                        }
+                        else if (c >100){
+                            count5++
+                            console.log(">100")
+                        }
+                        console.log(count0, count1, count2, count3, count4, count5)
+
+                        return cScale(c)
+                    }
+                }
+            }*/
+
         })
     }
-    
-    function toolTipText(selectedDDNumber, d, dropDownVisible) {
+
+    function toolTipText(parteiInFocus, d) {
         let text
         let themeArray = translationSelectedTheme(activeIndex)
         let gemeindeName = d.properties.gem_name;
         for (let i = 0; i < partei_starken_Array.length; i++) {
             if (matcher(gemeindeName.toString().toLowerCase(), partei_starken_Array[i].gemeindeName.toLowerCase())) {
-                switch (selectedDDNumber) {
+                switch (parteiInFocus) {
                     case 0: {
                         let svp = partei_starken_Array[i].parteien.svp.value
                         text = gemeindeName + " — " + "svp: " + (svp !== undefined ? (svp) : '0') + "%";
@@ -857,16 +811,23 @@ var scrollVis = function () {
                     }
                 }
                 switch (activeIndex){
-                    case -1:{
+                    // Ausländeranteil
+                    case 1:{}
+                    case 2:{}
+                    case 3:{}
+                    case 4:{
+                        text += "\nAusländeranteil:\n" +
+                            (themeArray[i].auslaenderanteil !== undefined ?
+                                ((Math.round(themeArray[i].auslaenderanteil*100)) + "%")
+
+                                : "Keine Daten vorhanden")
+
                         break;
                     }
-                    case 0:{
-                        break;
-                    }
-                    case 1:{
-                        break;
-                    }
-                    case 2:{ //mapOne
+                    //Kitaplätze
+                    case 5:{}
+                    case 6:{}
+                    case 7:{
                         if (themeArray[i] !== undefined) {
                             text += "\nKindertagesstätte: " + (themeArray[i].kindertagesstaetten === undefined ?
                                 'Keine Daten vorhanden' :
@@ -876,10 +837,10 @@ var scrollVis = function () {
                             text += "\nKindertagesstätte: " + 'Keine Daten vorhanden';
                         }
                         break;
-
                     }
-
-                    case 3:{ //mapOneAHalf
+                    //Sozialhilfe/einwohner
+                    case 8:{}
+                    case 9:{
                         if (themeArray[i] !== undefined) {
                             text += "\nBrutto Sozialhilfeausgaben/einwohner: " +
                                 (themeArray[i].brutto_sozialhilfe_je_einwohner !== undefined ?
@@ -887,74 +848,45 @@ var scrollVis = function () {
                                     'Keine Daten vorhanden');
                         }else{
                             text += "\nBrutto Sozialhilfeausgaben/einwohner: " + 'Keine Daten vorhanden';
-
                         }
                         break;
                     }
-                    case 4:{//MapTwo
-                        if (!dropDownVisible){
-                            text += "\nSteuerfüsse: " + (themeArray[i].gemeindesteuerfuss !== undefined ?
-                                "\n" + themeArray[i].gemeindesteuerfuss + "\t/\t" +summeSteuerfusse + "\t=\t"+ Math.round((themeArray[i].gemeindesteuerfuss/summeSteuerfusse)*10000)/100 + "%" :
-                                'Keine Daten vorhanden');
-                        }
+                    //gemeindesteuerfüsse
+                    case 10:{
+                        text += "\nSteuerfüsse: " + (themeArray[i].gemeindesteuerfuss !== undefined ?
+                        "\n" + themeArray[i].gemeindesteuerfuss + "\t/\t" +summeSteuerfusse + "\t=\t"+ Math.round((themeArray[i].gemeindesteuerfuss/summeSteuerfusse)*10000)/100 + "%" :
+                        'Keine Daten vorhanden');
                         break;
                     }
-                    case 5:{//MApThree
-                        if (!dropDownVisible){
-                            let thisK = 0;
-                            for (let k = 0; k< wohnbevoelkerung_Array.length; k++){
-                                if (matcher(themeArray[i].gemeindeName,wohnbevoelkerung_Array[k].gemeindeName)){
-                                    thisK = k;
-                                }
+                    case 11:{//konfession römisch
+                        let thisK = 0;
+                        for (let k = 0; k< wohnbevoelkerung_Array.length; k++){
+                            if (matcher(themeArray[i].gemeindeName,wohnbevoelkerung_Array[k].gemeindeName)){
+                                thisK = k;
                             }
-                            text += "\nKonfessionszugehörigkeit:\n" +
+                        }
+                        text += "\nKonfessionszugehörigkeit:\n" +
+                            "Römisch Katholisch Einwohner d. Gemeinde / Römisch Katholische Gesamteinwohnerzahl des Kantons: " + (themeArray[i].rom !== undefined ?
+                                (themeArray[i].rom + "\t/\t" + summeRom + "\t=\t" +  Math.round((themeArray[i].rom/summeRom)*10000)/100 + "%"
+                                    + "\nRömisch-Katholisch d. Gemeinde / Einwohnerzahl d. Gemeinde=\t" + themeArray[i].rom + " / " + wohnbevoelkerung_Array[thisK].bevoelkerung + "\t=\t" +  Math.round((themeArray[i].rom/wohnbevoelkerung_Array[thisK].bevoelkerung)*10000)/100 + "%")
+                                : "Keine Daten vorhanden")
+                        break;
+                    }
+                    case 12:{//konfession evang
+                        let thisK = 0;
+                        for (let k = 0; k< wohnbevoelkerung_Array.length; k++){
+                            if (matcher(themeArray[i].gemeindeName,wohnbevoelkerung_Array[k].gemeindeName)){
+                                thisK = k;
+                            }
+                        }                            text += "\nKonfessionszugehörigkeit:\n" +
                                 "Evangelisch reformiert Einwohner d. Gemeinde / Evangelisch reformiert Gesamteinwohnerzahl des Kantons: " + (themeArray[i].evang !== undefined ?
                                     (themeArray[i].evang + "\t/\t" + summeEvang + "\t=\t" +  Math.round((themeArray[i].evang/summeEvang)*10000)/100 + "%"
-                                    + "\nEvangelisch-reformiert d. Gemeinde/ Einwohnerzahl d. Gemeinde=\t" + themeArray[i].evang + " / " + wohnbevoelkerung_Array[thisK].bevoelkerung + "\t=\t" +  Math.round((themeArray[i].evang/wohnbevoelkerung_Array[thisK].bevoelkerung)*10000)/100 + "%")
+                                        + "\nEvangelisch-reformiert d. Gemeinde/ Einwohnerzahl d. Gemeinde =\t" + themeArray[i].evang + " / " + wohnbevoelkerung_Array[thisK].bevoelkerung + "\t=\t" +  Math.round((themeArray[i].evang/wohnbevoelkerung_Array[thisK].bevoelkerung)*10000)/100 + "%")
                                     : "Keine Daten vorhanden")
-                        }
                         break;
                     }
-                    case 6:{//Mapfour
-                        if (!dropDownVisible){
-                            let thisK = 0;
-                            for (let k = 0; k< wohnbevoelkerung_Array.length; k++){
-                                if (matcher(themeArray[i].gemeindeName,wohnbevoelkerung_Array[k].gemeindeName)){
-                                    thisK = k;
-                                }
-                            }
-                            text += "\nKonfessionszugehörigkeit:\n" +
-                                "Römisch Katholisch Einwohner d. Gemeinde / Römisch Katholische Gesamteinwohnerzahl des Kantons: " + (themeArray[i].rom !== undefined ?
-                                    (themeArray[i].rom + "\t/\t" + summeRom + "\t=\t" +  Math.round((themeArray[i].rom/summeRom)*10000)/100 + "%"
-                                        + "\nRömisch-Katholisch d. Gemeinde/ Einwohnerzahl d. Gemeinde=\t" + themeArray[i].rom + " / " + wohnbevoelkerung_Array[thisK].bevoelkerung + "\t=\t" +  Math.round((themeArray[i].rom/wohnbevoelkerung_Array[thisK].bevoelkerung)*10000)/100 + "%")
-                                    : "Keine Daten vorhanden")
-                        }
-                        break;
-                    }
-                    case 7:{//Mapfour
-                        if (!dropDownVisible){
-                            let thisK = 0;
-                            for (let k = 0; k< wohnbevoelkerung_Array.length; k++){
-                                if (matcher(themeArray[i].gemeindeName,wohnbevoelkerung_Array[k].gemeindeName)){
-                                    thisK = k;
-                                }
-                            }
-                            text += "\nKonfessionszugehörigkeit:\n" +
-                                "\"Übrige Einwohner d. Gemeinde / übrige Gesamteinwohnerzahl des Kantons:: " + (themeArray[i].ubrige !== undefined ?
-                                    (themeArray[i].ubrige + "\t/\t" + summeUbrige + "\t=\t" +  Math.round((themeArray[i].ubrige/summeUbrige)*10000)/100 + "%"
-                                        + "\nÜbrige d. Gemeinde / Einwohnerzahl d. Gemeinde=\t" + themeArray[i].ubrige + " / " + wohnbevoelkerung_Array[thisK].bevoelkerung + "\t=\t" +  Math.round((themeArray[i].ubrige/wohnbevoelkerung_Array[thisK].bevoelkerung)*10000)/100 + "%")
-                                    : "Keine Daten vorhanden")
-                        }
-                        break;
-                    }
-                    case 8:{//MapFive
-                        if (!dropDownVisible){
-                            text += "\nAusländeranteil:\n" +
-                                (themeArray[i].auslaenderanteil !== undefined ?
-                                    ((Math.round(themeArray[i].auslaenderanteil*100)) + "%")
-
-                                    : "Keine Daten vorhanden")
-                        }
+                    default:{
+                        text += 'Keine Daten vorhanden';
                         break;
                     }
                 }
@@ -963,7 +895,7 @@ var scrollVis = function () {
         return text;
     }
 
-    function tooltip(selectedDDNumber, dropDownVisible) {
+    function tooltip(selectedParteiNumber) {
         let text
         g.selectAll(".map-number1")
             .on("mouseover", function(e,d) {
@@ -978,7 +910,7 @@ var scrollVis = function () {
 
                 }else {
                     e.target.attributes.getNamedItem("stroke").value = "#FFF";
-                    text = toolTipText(selectedDDNumber, d, dropDownVisible);
+                    text = toolTipText(selectedParteiNumber, d);
                 }
                 e.target.attributes.getNamedItem("stroke-width").value = 5;
 
@@ -994,9 +926,9 @@ var scrollVis = function () {
             })
 
             .on("mousemove", function (e){
-                    tooltipP
-                        .style("left", (d3.pointer(e)[0] - 150) + "px")
-                        .style("top", (d3.pointer(e)[1] - 100) + "px")
+                tooltipP
+                    .style("left", (d3.pointer(e)[0] - 150) + "px")
+                    .style("top", (d3.pointer(e)[1] - 100) + "px")
             })
             .on("mouseout", () => {
                 g.selectAll("path").attr("stroke", "#000").attr("stroke-width", "1")
@@ -1013,94 +945,98 @@ var scrollVis = function () {
 
     }
 
-
-    d3.select('#filter').on("change", (e) => {
-        currentlySelectedDD = dropDownThemen[e.target.value];
-        switchDropDownData(currentlySelectedDD, true, false)
-
-    });
-
     function getSectionName(sectionNumber){
         switch (sectionNumber) {
-            case -1:{
-                break;
-            }
-            case 0:{
-                break;
-            }
             case 1:{
-                break;
-            }
-            case 2: {
-                return "kindertagesstaetten"
-            }
-            case 3:{ //mapOnAhalf
-                return "brutto_sozialhilfe_je_einwohner"
-            }
-            case 4:{//MapTwo
-                return "gemeindesteuerfuss"
-            }
-            case 5:{//MApThree
-                return "evang"
-            }
-            case 6:{//Mapfour
-                return "rom"
-            }
-            case 7:{//Mapfour
-                return "ubrige"
-            }
-            case 8:{//Mapfour
                 return "auslaenderanteil"
             }
+            case 2:{
+                return "auslaenderanteil"
+            }
+            case 3:{
+                return "auslaenderanteil"
+            }
+            case 4:{
+                return "auslaenderanteil"
+            }
+            case 5: {
+                return "kindertagesstaetten"
+            }
+            case 6: {
+                return "kindertagesstaetten"
+            }
+            case 7: {
+                return "kindertagesstaetten"
+            }
+            case 8:{
+                return "brutto_sozialhilfe_je_einwohner"
+            }
+            case 9: {
+                return "brutto_sozialhilfe_je_einwohner"
+            }
+            case 10:{
+                return "gemeindesteuerfuss"
+            }
+            case 11:{
+                return "rom"
+            }
+            case 12:{
+                return "evang"
+            }
         }
-        return "partei"
+        return -1
     }
     function translationSelectedTheme(sectionNumber){
         switch (sectionNumber){
-            case -1:{
-                break;
-            }
-            case 0:{
-                break;
-            }
-            case 1:{
-                break;
-            }
-            case 2:{ //mapOne
-                return kindertagesstaette_Array
-            }
-            case 3:{ //mapOnAhalf
-                return sozAusgabe_Array
-            }
-            case 4:{//MapTwo
-                return steuerfuesse_Array
-            }
-            case 5:{//MApThree
-                return konfessionszug_Array
-            }
-            case 6:{//Mapfour
-                return konfessionszug_Array
-            }
-            case 7:{//Mapfour
-                return konfessionszug_Array
-            }
-            case 8:{//MapFive
+            case 1:{// svp ausländeranteil
                 return auslaenderAnteil_Anteil
             }
+            case 2:{ // sp ausländeranteil
+                return auslaenderAnteil_Anteil
+            }
+            case 3:{ // fdp ausländeranteil
+                return auslaenderAnteil_Anteil
+            }
+            case 4:{ // GP ausländeranteil
+                return auslaenderAnteil_Anteil
+            }
+            case 5:{ // SVP Kitaplätze
+                return kindertagesstaette_Array
+            }
+            case 6:{ // SP Kitaplätze
+                return kindertagesstaette_Array
+            }
+            case 7:{ // FDP Kitaplätze
+                return kindertagesstaette_Array
+            }
+            case 8:{ // SVP Sozialhilfe
+                return sozAusgabe_Array
+            }
+            case 9:{ // SP Sozialhilfe
+                return sozAusgabe_Array
+            }
+            case 10:{ // FDP GemeindeSteuerfüsse
+                return steuerfuesse_Array
+            }
+            case 11:{ // CVP Konfession (röm-kath)
+                return konfessionszug_Array
+            }
+            case 12:{ // CVP Konfession (evang-ref)
+                return konfessionszug_Array
+            }
             default:{
-                return partei_starken_Array
+                return -1
             }
         }
-        return partei_starken_Array
+        return -1
     }
     function changeTextForSections(){
         try {
-            if (activeIndex >1) {
+            if (activeIndex >0) {
                 //https://thisancog.github.io/statistics.js/inc/correlation.html
                 let selectedArray = translationSelectedTheme(activeIndex)
                 let sortedParteien = sortData(partei_starken_Array, "gemeindeName", false)
                 selectedArray = sortData(selectedArray, "gemeindeName", false)
-
 
                 var array = []
                 var vars = {partei: 'interval', selected: 'interval'}
@@ -1110,7 +1046,7 @@ var scrollVis = function () {
                         if (matcher(sortedParteien[i].gemeindeName, selectedArray[j].gemeindeName)) {
                             array.push({
                                 gemeindeName: sortedParteien[i].gemeindeName,
-                                partei: sortedParteien[i].parteien[currentlySelectedDD.name].value,
+                                partei: sortedParteien[i].parteien['svp'].value,
                                 selected: 100*(selectedArray[j][getSectionName(activeIndex)] / summe(selectedArray, getSectionName(activeIndex)))
                             })
                         }
@@ -1120,6 +1056,9 @@ var scrollVis = function () {
 
                 var stats = new Statistics(array, vars)
                 var R = stats.linearRegression('partei', 'selected')
+/*                console.log('svp' +" section: " + activeIndex);
+                console.log("LinReg:", R)
+                console.log("CorrCoeff:", R.correlationCoefficient)*/
                 return R.correlationCoefficient
             }
         }
@@ -1129,16 +1068,14 @@ var scrollVis = function () {
 
     }
 
-    function switchDropDownData(selectedDD, showAll, DropDownSectionVisible) {
+    function switchDropDownData(selectedPartei,topic) {
         try {
-            changeTextForSections()
-            setFilling(selectedDD, !DropDownSectionVisible)
-            if (showAll || showAll === undefined) {
-                tooltip(selectedDD.id, DropDownSectionVisible);
-                drawScale("colorscale", d3.interpolate("#FFF", selectedDD.color))
-            }
+            //changeTextForSections()
+            setFilling(selectedPartei,topic)
+            tooltip(selectedPartei.id);
+
         }catch (e){
-            console.log("switchDropDownData Didnt Work")
+            console.log(e)
         }
     }
 
@@ -1157,6 +1094,8 @@ var scrollVis = function () {
             }
             catch (e){
                 window.scroll(top)
+                //console.log(e)
+
             }
         })
         lastIndex = activeIndex;
@@ -1194,9 +1133,10 @@ function display(data) {
 
 
     // setup scroll functionality
-    d3.selectAll(".lastStep").style("height", innerHeight/2.3 + "px")
+    d3.selectAll(".lastStep").style("height", innerHeight/1.3 + "px")
     d3.selectAll(".firstStep").style("margin-top", innerHeight/20 + "px")
     d3.selectAll(".step").style("margin-bottom", innerHeight/5 + "px")
+
     var scroll = scroller()
         .container(d3.select('#graphic'));
 
@@ -1207,19 +1147,20 @@ function display(data) {
 
 
     scroll.on('active', function (index) {
-    // highlight current step text
-    d3.selectAll('.step')
-        .style('opacity', function (d, i) {
-            return i === index ? 1 : 0.2;
-        });
+        // highlight current step text
+        d3.selectAll('.step')
+            .style('opacity', function (d, i) {
+                return i === index ? 1 : 0.2;
+            });
 
-    // activate current section
+        // activate current section
         plot.activate(index);
 
     });
 
-
 }
+
+
 
 let set = ["partei_starken", "konfessionszugehoerigkeit", "kindertagesstaette", "steuerfuesse", "sozAusgabe", "auslaenderAnteil_Anteil"]
 document.getElementById("spinner").classList.remove("d-none")
@@ -1228,9 +1169,4 @@ fuse(set).then(data => {
     display(data)
     document.getElementById("spinner").classList.add("d-none")
     document.getElementById("content").classList.remove("invisible")
-})
-
-window.addEventListener("load", (event) => {
-    let filter = document.getElementById('filter')
-    filter.value = 0
 })
