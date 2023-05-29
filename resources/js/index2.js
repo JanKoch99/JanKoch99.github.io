@@ -648,23 +648,118 @@ var scrollVis = function () {
     function setFilling(selectedDD, isOtherArray) {
         let data = partei_starken_Array;
         let interpolator = d3.interpolate("#FFF", selectedDD.color)
+        let partei;
+        if (isOtherArray){
+            partei = currentlySelectedDD
+        }else {
+            partei = selectedDD
+        }
+        data = sortData(data, partei.name, true)
 
         var cScale = d3.scaleSequential()
             .interpolator(interpolator)
             .domain([0, 99]);
-        if (activeIndex === 5) {
-            konfessionszug_Array = sortData(konfessionszug_Array, "evang")
-        }
-        if (activeIndex === 6) {
-            konfessionszug_Array = sortData(konfessionszug_Array, "rom")
-        }
-        if (activeIndex === 7) {
-            konfessionszug_Array = sortData(konfessionszug_Array, "ubrige")
-        }
 
         g.selectAll(".map-number1").style("fill", (d) => {
+            let toNorm, maxValue;
+            if (matcher(d.properties.gem_name.toString().toLowerCase(), "bodensee")) {
+                return "#1b95e0"
+            }
+            if (isOtherArray) {
+                let themeArray = sortData(translationSelectedTheme(activeIndex), getSelection(activeIndex), false)
+                if (activeIndex === 5) {
+                    themeArray = sortData(konfessionszug_Array, "evang")
+                }
+                if (activeIndex === 6) {
+                    themeArray = sortData(konfessionszug_Array, "rom")
+                }
+                if (activeIndex === 7) {
+                    themeArray = sortData(konfessionszug_Array, "ubrige")
+                }
+                for (let i = 0; i < themeArray.length; i++) {
 
-            for (let i = 0; i < partei_starken_Array.length; i++) {
+                    if (data[i] !== undefined && data[i] !== null && matcher(d.properties.gem_name.toString().toLowerCase(), data[i].gemeindeName.toLowerCase())) {
+                        let toNorm, maxValue;
+                        let themeArray = sortData(translationSelectedTheme(activeIndex), getSectionName(activeIndex),false)
+                        if (themeArray === -1 || getSectionName(activeIndex) === -1){
+                            throw "SectionNotAvailable"
+                        }
+                        if (themeArray[i] !== undefined) {
+                            toNorm = parseFloat(themeArray[i][getSectionName(activeIndex)])
+                            maxValue = parseFloat(themeArray[themeArray.length - 1][getSectionName(activeIndex)])
+                        }
+                        else {
+                            return cScale(0)
+                        }
+
+                        if (toNorm === undefined) {
+                            return cScale(0)
+                        }
+                        let normalized = toNorm / maxValue
+                        if (normalized > 1) {
+                            normalized = 1;
+                        }
+                        return cScale(100 * normalized)//return cScale(0)
+                    }
+                }
+                console.log("outside undefined")
+
+                return cScale(0)
+            }
+
+
+            else{
+                for (let i = 0; i < partei_starken_Array.length; i++) {
+                    if (data[i] !== undefined && data[i] !== null && matcher(d.properties.gem_name.toString().toLowerCase(), data[i].gemeindeName.toLowerCase())) {
+
+                        switch (currentlySelectedDD.id) {
+                            case 0:
+                                toNorm = data[i].parteien.svp.value
+                                maxValue = data[data.length - 1].parteien.svp.value
+                                break;
+                            case 1:
+                                toNorm = data[i].parteien.sp.value
+                                maxValue = data[data.length - 1].parteien.sp.value
+                                break;
+                            case 2:
+                                toNorm = data[i].parteien.fdp.value
+                                maxValue = data[data.length - 1].parteien.fdp.value
+                                break;
+                            case 3:
+                                toNorm = data[i].parteien.gp.value
+                                maxValue = data[data.length - 1].parteien.gp.value
+                                break;
+                            case 4:
+                                toNorm = data[i].parteien.cvp.value
+                                maxValue = data[data.length - 1].parteien.cvp.value
+                                break;
+                            case 5:
+                                toNorm = data[i].parteien.glp.value
+                                maxValue = data[data.length - 1].parteien.glp.value
+                                break;
+                            case 6:
+                                toNorm = data[i].parteien.evp.value
+                                maxValue = data[data.length - 1].parteien.evp.value
+                                break;
+                            default:
+                                toNorm = 0;
+                                maxValue = 1;
+                        }
+                        currentMaxValue = maxValue.toFixed(2) + "%"
+                        currentMinValue = "0%"
+                        if (toNorm === undefined) {
+                            return cScale(0)
+                        }
+                        let normalized = toNorm / maxValue
+                        if (normalized > 1) {
+                            normalized = 1;
+                        }
+                        return cScale(100 * normalized)
+                    }
+                }
+            }
+
+/*            for (let i = 0; i < partei_starken_Array.length; i++) {
                 if (matcher(d.properties.gem_name.toString().toLowerCase(), "bodensee")) {
                     return "#1b95e0"
                 }
@@ -673,6 +768,16 @@ var scrollVis = function () {
                     let done = false;
                     if (isOtherArray) {
                         let themeArray = translationSelectedTheme(activeIndex)
+                        if (activeIndex === 5) {
+                            themeArray = sortData(konfessionszug_Array, "evang")
+                        }
+                        if (activeIndex === 6) {
+                            themeArray = sortData(konfessionszug_Array, "rom")
+                        }
+                        if (activeIndex === 7) {
+                            themeArray = sortData(konfessionszug_Array, "ubrige")
+                        }
+
                         if (activeIndex === 2) {
                             if (themeArray[i] !== undefined) {
                                 toNorm = themeArray[i].kindertagesstaetten
@@ -752,39 +857,32 @@ var scrollVis = function () {
                     }
                     if (!isOtherArray || !done) {
 
-                        switch (selectedDD.id) {
+                        switch (currentlySelectedDD.id) {
                             case 0:
-                                sortData(data, 'svp', true)
                                 toNorm = data[i].parteien.svp.value
                                 maxValue = data[data.length - 1].parteien.svp.value
                                 break;
                             case 1:
-                                sortData(data, 'sp', true)
                                 toNorm = data[i].parteien.sp.value
                                 maxValue = data[data.length - 1].parteien.sp.value
                                 break;
                             case 2:
-                                sortData(data, 'fdp', true)
                                 toNorm = data[i].parteien.fdp.value
                                 maxValue = data[data.length - 1].parteien.fdp.value
                                 break;
                             case 3:
-                                sortData(data, 'gp', true)
                                 toNorm = data[i].parteien.gp.value
                                 maxValue = data[data.length - 1].parteien.gp.value
                                 break;
                             case 4:
-                                sortData(data, 'cvp', true)
                                 toNorm = data[i].parteien.cvp.value
                                 maxValue = data[data.length - 1].parteien.cvp.value
                                 break;
                             case 5:
-                                sortData(data, 'glp', true)
                                 toNorm = data[i].parteien.glp.value
                                 maxValue = data[data.length - 1].parteien.glp.value
                                 break;
                             case 6:
-                                sortData(data, 'evp', true)
                                 toNorm = data[i].parteien.evp.value
                                 maxValue = data[data.length - 1].parteien.evp.value
                                 break;
@@ -805,7 +903,7 @@ var scrollVis = function () {
                     }
                     return cScale(100* normalized)
                 }
-            }
+            }*/
 
         })
     }
@@ -1005,18 +1103,22 @@ var scrollVis = function () {
 
     }
     function matcher(one, two){
-        one = one.split(' ');
-        two = two.split(' ');
-        if (one[0].startsWith(two[0])){
-            return true;
+        if (one !== undefined && two !== undefined) {
+            one = one.split(' ');
+            two = two.split(' ');
+            if (one[0].startsWith(two[0])) {
+                return true;
+            }
         }
-
+        else{
+            return false;
+        }
     }
 
 
     d3.select('#filter').on("change", (e) => {
         currentlySelectedDD = dropDownThemen[e.target.value];
-        switchDropDownData(currentlySelectedDD, true, false)
+        switchDropDownData(currentlySelectedDD, true, true)
 
     });
 
@@ -1138,7 +1240,7 @@ var scrollVis = function () {
                 drawScale("colorscale", d3.interpolate("#FFF", selectedDD.color))
             }
         }catch (e){
-            console.log("switchDropDownData Didnt Work")
+            console.log(e)
         }
     }
 
@@ -1194,7 +1296,7 @@ function display(data) {
 
 
     // setup scroll functionality
-    d3.selectAll(".lastStep").style("height", innerHeight/2.3 + "px")
+    d3.selectAll(".lastStep").style("min-height", innerHeight/1.5 + "px")
     d3.selectAll(".firstStep").style("margin-top", innerHeight/20 + "px")
     d3.selectAll(".step").style("margin-bottom", innerHeight/5 + "px")
     var scroll = scroller()

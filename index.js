@@ -339,6 +339,9 @@ async function fetchingGeneralData(dataset, query, rows, sort) {
     return await fetch(url);
 }
 function sortData(arraySet, field, partei = false) {
+/*    if (arraySet === -1){
+        return -1;
+    }*/
     if (!partei) {
         return arraySet.sort((a, b) => {
             /*Prevent undefined to go at the top of the list*/
@@ -621,7 +624,6 @@ var scrollVis = function () {
     }
 
     function setFilling(selectedPartei,topic) {
-        let count0=0,count1=0,count2=0,count3=0,count4=0,count5 =0;
 
         let data = partei_starken_Array;
         let interpolator = d3.interpolate("#FFF", selectedPartei.color)
@@ -631,9 +633,6 @@ var scrollVis = function () {
             .domain([0, 99]);
 
         g.selectAll(".map-number1").style("fill", (d) => {
-            let normArray =[]
-            let toBeUsedInComp = []
-
             for (let i = 0; i < partei_starken_Array.length; i++) {
                 if (matcher(d.properties.gem_name.toString().toLowerCase(), "bodensee")) {
                     return "#1b95e0"
@@ -676,6 +675,9 @@ var scrollVis = function () {
                         if (topic === "Sozialhilfe") {
                             c = ((normalized)*partei_starken_Array[i].parteien[selectedPartei.name].value*7)
                         }
+                        if (topic === "Kitaplätze") {
+                            c = ((normalized)*partei_starken_Array[i].parteien[selectedPartei.name].value*6)
+                        }
                     }
                     if(selectedPartei.name === "gp" && topic ==="Ausländeranteil") {
                         c = ((normalized)*partei_starken_Array[i].parteien[selectedPartei.name].value*10)
@@ -697,69 +699,8 @@ var scrollVis = function () {
                     }
                     //console.log(c, partei_starken_Array[i].gemeindeName)
                     return cScale(10+c);
-
-
-                    //normArray.push({"value": normalized, "gemeindeName": partei_starken_Array[i].gemeindeName});
                 }
             }
-
-           /* normArray = sortData(normArray, "value", false)
-            toBeUsedInComp = sortData(partei_starken_Array, selectedPartei.name,true)
-            for (let i = 0; i < toBeUsedInComp.length; i++) {
-                for (let j = 0; j<normArray.length; j++){
-                    if (matcher(toBeUsedInComp[i].gemeindeName, normArray[j].gemeindeName)) {
-
-                        /!*console.log("i: "+i + "\t" + toBeUsedInComp[i].parteien[selectedPartei.name].value)
-                        console.log("j: "+j+ "\t" + 100*normArray[j].value)
-*!/let c =0;
-let s=1
-                        if (100*normArray[j].value < toBeUsedInComp[i].parteien[selectedPartei.name].value){
-                           /!* console.log(100*normArray[j].value +"\t<\t"+ toBeUsedInComp[i].parteien[selectedPartei.name].value)
-                            console.log(100*((100*normArray[j].value)/(toBeUsedInComp[i].parteien[selectedPartei.name].value)))
-*!/
-                            c += (100*((normArray[j].value*s* 100)/(toBeUsedInComp[i].parteien[selectedPartei.name].value)))
-                        }
-                        else if ((100*normArray[j].value >toBeUsedInComp[i].parteien[selectedPartei.name].value)){
-  /!*                          console.log(100*normArray[j].value +"\t>=\t"+ (toBeUsedInComp[i].parteien[selectedPartei.name].value))
-                            console.log(100*(toBeUsedInComp[i].parteien[selectedPartei.name].value/(100*normArray[j].value)))
-  *!/
-                            c += (100*((s*toBeUsedInComp[i].parteien[selectedPartei.name].value) / (normArray[j].value*100)))
-                        }
-
-                        if (c<40){
-                            c*=2
-                        }
-
-                        if (c < 20){
-                            count0++
-                            console.log("<10")
-                        }
-                        else if (c < 40){
-                            count1++
-                            console.log("20<40")
-                        }
-                        else if (c < 60){
-                            count2++
-                            console.log("40<60")
-                        }
-                        else if (c < 80){
-                            count3++
-                            console.log("60<80")
-                        }
-                        else if (c <100){
-                            count4++
-                            console.log("80<100")
-                        }
-                        else if (c >100){
-                            count5++
-                            console.log(">100")
-                        }
-                        console.log(count0, count1, count2, count3, count4, count5)
-
-                        return cScale(c)
-                    }
-                }
-            }*/
 
         })
     }
@@ -1133,7 +1074,7 @@ function display(data) {
 
 
     // setup scroll functionality
-    d3.selectAll(".lastStep").style("height", innerHeight/1.3 + "px")
+    d3.selectAll(".lastStep").style("min-height", innerHeight/1.5 + "px")
     d3.selectAll(".firstStep").style("margin-top", innerHeight/20 + "px")
     d3.selectAll(".step").style("margin-bottom", innerHeight/5 + "px")
 
