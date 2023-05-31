@@ -5,13 +5,14 @@
     <link href="resources/css/index.css" type="text/css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <meta charset="UTF-8">
-    <title>OD-Vis Datastory Thurgau</title>
+    <link rel="shortcut icon" type="image/x-icon" href="resources/logo/logo.ico" />
+    <title>Thurgauer GeoSpatial-OpenData Visualisierung</title>
 </head>
 <body>
 
 <div class="cont container w-100">
     <div id="graphic" class="w-100">
-        <div id="sections" class="top-0 start-0 w-50">
+        <div id="route sections" class="top-0 start-0 w-50">
             <div class="w-100" id="spinner">
                 <div class="position-absolute top-50 start-50 translate-middle" style="font-size: 300px">
                     <i class="fa-solid fa-rotate fa-spin fa-2xl"></i>
@@ -19,82 +20,65 @@
             </div>
             <div id="content" class="invisible">
                 <section class="step firstStep">
-                    <div class="title">Introduction</div>
+                    <div class="title">Einführung</div>
                     <p>Was kommt Ihnen für ein Thema in den Sinn, wenn Sie an die SVP denken. Oder an die SP? Oder mit was verbinden Sie die FDP? Wahrscheinlich nicht auf Anhieb mit Klimaschutz, sondern eher mit Banken. Und bei der SVP eher nicht Förderung von Kita-Plätzen, sondern eher Themen wie Migration oder Landwirtschaft. Sind das nur Klischees? Und wie steht es um die Wählerschaft?</p>
                     <p>Unsere Visualisierungen zeigen, ob sich diese Vermutungen in den Thurgauer Gemeinden bestätigen lassen. Sind die Steuerfüsse in FDP-Hochburgen tatsächlich tiefer als in anderen Gemeinden? Oder lässt sich ein Zusammenhang zwischen Ausländeranteilen und SVP-Wähleranteilen feststellen.</p>
-                    <p>Scrollen Sie sich durch unsere Erkenntnisse. Einen Überblick über alle ausgewählten Themen nach Parteien finden Sie <a href="resources/html/pageDD.html">hier</a></p>
+                    <br>
+                    <p>Scrollen Sie sich durch unsere Erkenntnisse. Einen Überblick über alle ausgewählten Themen nach Parteien finden Sie <a id="all" href="resources/html/pageDD.html">hier</a></p>
 
                 </section>
-                <section class="step">
-                    <div class="title">Ausländeranteil in zusammenhang mit SVP</div>
-                    <p>
-                        DAS Thema der SVP schlechthin ist Migration. Damit – so die Medien – gewinnen sie ihre Wähler:innen, vor allem dort, wo es meist kaum Problem diesbezüglich gibt. Ist es auch im Thurgau so, dass die SVP dort am stärksten ist, wo es wenig Ausländerinnen und Ausländer gibt. Der Blick auf die Daten bestätigt die These klar.                 </p>
+                <section class="step step-padding">
+                    <div class="title">SVP und Ausländeranteil, geht das?</div>
+                    <p>DAS Thema der SVP schlechthin ist Migration. Damit – so die Medien – gewinnen sie ihre Wähler:innen, vor allem dort, wo es meist kaum Problem diesbezüglich gibt. Ist es auch im Thurgau so, dass die SVP dort am stärksten ist, wo es wenig Ausländerinnen und Ausländer gibt. Der Blick auf die Daten bestätigt die These klar.                 </p>
                 </section>
                 <section class="step">
-                    <div class="title">Ausländeranteil in zusammenhang mit SP</div>
-                    <p>
-                        Und wie siehts bei der SP aus, der Partei, die sich für Soziales und Integration einsetzt? Wiederum bestätigen sich die Thesen mit Blick auf den Thurgau: Dort, wo Integration aufgrund höherer Ausländeranteile wichtig ist, wird die SP stärker unterstützt. </p>
+                    <div class="title">SP Hand in Hand mit Ausländeranteil?</div>
+                    <p>Und wie siehts bei der SP aus, der Partei, die sich für Soziales und Integration einsetzt? Wiederum bestätigen sich die Thesen mit Blick auf den Thurgau: Dort, wo Integration aufgrund höherer Ausländeranteile wichtig ist, wird die SP stärker unterstützt. </p>
                 </section>
                 <section class="step">
-                    <div class="title">Ausländeranteil in zusammenhang mit FDP</div>
-                    <p>
-                        ?????????????????????
-                    </p>
+                    <div class="title">GP, grün und ausländerfreundlich?</div>
+                    <p>GRÜNE und Klima, das ist sicher auch Ihr erster Gedanke. Und dass eher die städtische Bevölkerung grün wählt. Der Thurgau ist ein Landkanton mit kleinen Gemeinden. Wie sieht es hier aus. Direkt messen können wir es nicht, aber es gibt einen interessanten Zusammenhang: Dort wo mehr Ausländer:innen wohnen, schneiden die Grünen besser ab. Und wie in anderen Kantonen sind die Ausländeranteile auch im Thurgau in Städten am höchsten.                </p>
                 </section>
                 <section class="step">
-                    <div class="title">Ausländeranteil in zusammenhang mit GP</div>
-                    <p>
-                        GRÜNE und Klima, das ist sicher auch Ihr erster Gedanke. Und dass eher die städtische Bevölkerung grün wählt. Der Thurgau ist ein Landkanton mit kleinen Gemeinden. Wie sieht es hier aus. Direkt messen können wir es nicht, aber es gibt einen interessanten Zusammenhang: Dort wo mehr Ausländer:innen wohnen, schneiden die Grünen besser ab. Und wie in anderen Kantonen sind die Ausländeranteile auch im Thurgau in Städten am höchsten.                </p>
+                    <div class="title">Zuhause aufwachsen laut SVP?</div>
+                    <p>Kinder sollen zu Hause betreut werden. Das – so glaubt man den Berichten – ist ein weiteres Credo der SVP. Trifft das zu, so müsste es in Gemeinden mit hohen SVP-Wähleranteilen weniger Kitas geben. Was meinen die Daten aus dem Thurgau? Sie bestätigen auch diese Vermutung.                 </p>
                 </section>
                 <section class="step">
-                    <div class="title">Kitaplätze in zusammenhang mit SVP</div>
-                    <p>
-                        Kinder sollen zu Hause betreut werden. Das – so glaubt man den Berichten – ist ein weiteres Credo der SVP. Trifft das zu, so müsste es in Gemeinden mit hohen SVP-Wähleranteilen weniger Kitas geben. Was meinen die Daten aus dem Thurgau? Sie bestätigen auch diese Vermutung.                 </p>
+                    <div class="title">Kitafreundliche SP?</div>
+                    <p>Und auch beim Thema Soziales und Vereinbarkeit von Familie und Beruf ist das Klischee keines, sondern Tatsache: Wo die SP besser abschneidet, gibt es auch mehr Kita-Plätze.</p>
                 </section>
                 <section class="step">
-                    <div class="title">Kitaplätze in zusammenhang mit SP</div>
-                    <p>
-                        Und auch beim Thema Soziales und Vereinbarkeit von Familie und Beruf ist das Klischee keines, sondern Tatsache: Wo die SP besser abschneidet, gibt es auch mehr Kita-Plätze.
-                    </p>
+                    <div class="title">Sorgt FDP für mehr Kitas?</div>
+                    <p>Wie sieht es aus bezüglich Förderung der Erwerbstätigkeit von Frauen? Werden dort, wo FDP-Politiker:innen unterstützt werden, auch mehr Kita-Plätze angeboten. Auch hier bestätigt sich die Vermutung.                 </p>
                 </section>
                 <section class="step">
-                    <div class="title">Kitaplätze in zusammenhang mit FDP</div>
-                    <p>
-                        Wie sieht es aus bezüglich Förderung der Erwerbstätigkeit von Frauen? Werden dort, wo FDP-Politiker:innen unterstützt werden, auch mehr Kita-Plätze angeboten. Auch hier bestätigt sich die Vermutung.                 </p>
+                    <div class="title">Sozialhilfeausgaben ohne SVP?</div>
+                    <p>Dass der Staat nicht für die Wohlfahrt zuständig ist, sondern die Bürgerinnen und Bürger selber, legt man der SVP ebenfalls regelmässig in den Mund. Und siehe, auch hier sprechen die Daten dafür, dass an dieser Vermutung etwas dran sein muss. Je höher der SVP-Wähleranteil, desto tiefer die Sozialhilfeausgaben.                </p>
                 </section>
                 <section class="step">
-                    <div class="title">Sozialhilfe in zusammenhang mit SVP</div>
-                    <p>
-                        Dass der Staat nicht für die Wohlfahrt zuständig ist, sondern die Bürgerinnen und Bürger selber, legt man der SVP ebenfalls regelmässig in den Mund. Und siehe, auch hier sprechen die Daten dafür, dass an dieser Vermutung etwas dran sein muss. Je höher der SVP-Wähleranteil, desto tiefer die Sozialhilfeausgaben.                </p>
+                    <div class="title">Ist die SP wirklich sozial?</div>
+                    <p>Rechte Kreise werfen den Linken oft vor, zu viel Geld für Soziales auszugeben. Und tatsächlich sind die Sozialhilfeausgaben höher, wenn mehr SP gewählt wird.                </p>
                 </section>
                 <section class="step">
-                    <div class="title">Sozialhilfe in zusammenhang mit SP</div>
-                    <p>
-                        Rechte Kreise werfen den Linken oft vor, zu viel Geld für Soziales auszugeben. Und tatsächlich sind die Sozialhilfeausgaben höher, wenn mehr SP gewählt wird.                </p>
+                    <div class="title">FDP will keine Steuern?</div>
+                    <p>FDP und freie Marktwirtschaft, das gehört schon zusammen wie Pech und Schwefel. FDP-Vertreter:innen setzen sich, so steht es regelmässig in den Medien, für weniger Staat und mehr Chancen für die freie Wirtschaft ein, also für tiefere Steuern. Aber sind denn tatsächlich dort, wo die FPD stark ist, die Steuern auch tiefer. Ein Blick auf den Thurgau bestätigt die These: Je höher der Wähleranteil, desto tiefer der Gemeindesteuerfuss.                </p>
                 </section>
                 <section class="step">
-                    <div class="title">Gemeindesteuerfüsse in zusammenhang mit FDP</div>
-                    <p>
-                        FDP und freie Marktwirtschaft, das gehört schon zusammen wie die Pech und Schwefel. FDP-Vertreter:innen setzen sich, so steht es regelmässig in den Medien, für weniger Staat und mehr Chancen für die freie Wirtschaft ein, also für tiefere Steuern. Aber sind denn tatsächlich dort, wo die FPD stark ist, die Steuern auch tiefer. Ein Blick auf den Thurgau bestätigt die These: Je höher der Wähleranteil, desto tiefer der Gemeindesteuerfuss.                </p>
+                    <div class="title">Die Mitte, immer noch Katholisch?</div>
+                    <p>Das "C" im Namen der Partei ist – oder war zumindest bis zur Umbenennung in Die Mitte – auch Programm. Die Hochburgen der Partei liegen denn auch in den stark katholisch geprägten Regionen. Und wie ist es im Thurgau, dem eher evangelisch geprägten Kanton. Ist hier die CVP auch dort am stärksten, wo viele Katholik:innen leben? Die These bestätigt sich klar.                 </p>
                 </section>
                 <section class="step">
-                    <div class="title">Konfession(Römisch-Katholisch) in zusammenhang mit CVP</div>
-                    <p>
-                        Das "C" im Namen der Partei ist – oder war zumindest bis zur Umbenennung in Die Mitte – auch Programm. Die Hochburgen der Partei liegen denn auch in den stark katholisch geprägten Regionen. Und wie ist es im Thurgau, dem eher evangelisch geprägten Kanton. Ist hier die CVP auch dort am stärksten, wo viele Katholik:innen leben? Die These bestätigt sich klar.                 </p>
-                </section>
-                <section class="step">
-                    <div class="title">Konfession(Evangelisch-reformiert) in zusammenhang mit CVP</div>
-                    <p>
-                        Und auch die umgekehrte Vermutung trifft ins Schwarze. Dort wo am meisten evangelische Einwohner:innen wohnen, schneidet die CVP am schlechtesten ab.                 </p>
+                    <div class="title">Reformiert, dann wohl CPV?</div>
+                    <p>Und auch die umgekehrte Vermutung trifft ins Schwarze. Dort wo am meisten evangelische Einwohner:innen wohnen, schneidet die CVP am schlechtesten ab.                 </p>
                 </section>
 
                 <section class="step lastStep">
                     <div class="title">Schlussfolgerungen und Hinweise</div>
-                    <p>
-                        Conclusion
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. A assumenda blanditiis commodi distinctio, id iusto minus molestiae mollitia neque, officiis, pariatur ratione repudiandae ullam! Accusamus fuga harum impedit quae quod temporibus ullam voluptatum? Libero sapiente, suscipit? Ad adipisci aperiam ducimus eaque ipsam libero magnam maxime minus natus odio perferendis quae quaerat quam, quia quidem quis quo, quod sed sunt suscipit tenetur unde velit? Ab perspiciatis provident quisquam suscipit veniam! Ad aliquid aperiam eum, fuga laudantium magni maxime omnis optio perferendis quibusdam sint soluta, ullam. A architecto commodi ea eos, est, eveniet fuga laborum minima minus modi natus, neque nostrum nulla omnis possimus quam voluptate? Accusantium architecto consectetur, dicta distinctio et fugiat impedit incidunt maiores nihil repellendus, repudiandae vitae? Amet aperiam culpa ex fugit iure optio quam qui quia repellendus reprehenderit. Accusantium architecto commodi consectetur ducimus earum iusto labore minus modi molestiae, nemo nisi velit! Accusamus ad architecto assumenda deleniti est expedita, explicabo inventore iste nesciunt nobis perspiciatis placeat provident recusandae sint sunt totam, voluptates. Placeat, qui repellat? Praesentium, quae, soluta? Accusantium alias architecto, distinctio, error eum maxime mollitia, nam nulla quisquam saepe sint veniam voluptatem voluptatibus! Debitis laudantium molestiae provident, sequi tempora velit vitae. Cumque dicta id libero saepe veniam.
-                    </p>
-
+                    <p>Wie die Daten und Grafiken zeigen, scheinen die viel zitierten "Parteiklischees" in den Thurgauer Gemeinden zu bestätigen. So sind die Steuerfüsse in Gemeinden mit hoher FDP-Wählerschaft tatsächlich tiefer oder Ausländeranteile in SVP-starken Gemeinden verhältnismässig geringer.
+                        Einzig auf die Frage, was nun was beeinflusst – also ob nun aber FDP-Wähler:innen vorzugsweise in Gemeinden mit tiefen Steueransätzen ziehen oder umgekehrt –  können die Auswertungen nicht beantworten.
+                        Aber kennen Sie die Antwort auf die Frage nach dem Huhn und dem Ei? ;)
+                        Karten zu allen Parteien und Indikatoren finden Sie <a href="resources/html/pageDD.html">hier</a>.</p>
+                    <br>
                     <p><strong>Die Interpretationen basieren auf einfachen statistischen Berechnungen. Mittels dem Pearson-Korrelations-Test wurde getestet, ob es einen signifikanten Zusammenhang zwischen Parteistärke und den ausgewählten Indikatoren gibt. Aufgrund der tiefen N-Zahl (80 Gemeinden) müssen die Ergebnisse mit grosser Vorsicht interpretiert werden.</strong></p>
 
                 </section>
@@ -117,10 +101,7 @@
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>
-
-
 <script src="resources/js/statistics.min.js" type="text/javascript"></script>
-
 </body>
 
 </html>

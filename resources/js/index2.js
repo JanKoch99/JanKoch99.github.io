@@ -174,10 +174,15 @@ async function fuse(wholeSet) {
                     kindertagesstaette_Array.splice(0, 1);
                 }
                 let fields = jsonDataE.records[i].fields;
-                kindertagesstaette_Array.push({
-                    gemeindeName: fields['politische_gemeinde'],
-                    kindertagesstaetten: fields['anzahl_platze']
-                })
+                let foundTagesst = kindertagesstaette_Array.find(item => item.gemeindeName === fields['politische_gemeinde'])
+                if (foundTagesst !== undefined) {
+                    foundTagesst.kindertagesstaetten = Number(foundTagesst.kindertagesstaetten) +Number(fields['anzahl_platze'])
+                } else {
+                    kindertagesstaette_Array.push({
+                        gemeindeName: fields['politische_gemeinde'],
+                        kindertagesstaetten: fields['anzahl_platze']
+                    })
+                }
             }
             kindertagesstaette_Array = sortData(kindertagesstaette_Array, "kindertagesstaetten");
             summeTagesstätte = summe(kindertagesstaette_Array, "kindertagesstaetten")
@@ -617,7 +622,6 @@ var scrollVis = function () {
                     }
                     return (Math.floor(xScale(d + 1)) - Math.floor(xScale(d)) + 1) + "px";
                 })
-                //instead of filling.. nur e zwüschelösig
                 .style("background-color", (d) => {
                     let c = cScale(d)
                     return c
@@ -666,44 +670,58 @@ var scrollVis = function () {
                 return "#1b95e0"
             }
             if (isOtherArray) {
-                let themeArray = sortData(translationSelectedTheme(activeIndex), getSelection(activeIndex), false)
+                let themeArray
                 if (activeIndex === 5) {
                     themeArray = sortData(konfessionszug_Array, "evang")
-                }
-                if (activeIndex === 6) {
+                } else if (activeIndex === 6) {
                     themeArray = sortData(konfessionszug_Array, "rom")
-                }
-                if (activeIndex === 7) {
+                } else if (activeIndex === 7) {
                     themeArray = sortData(konfessionszug_Array, "ubrige")
+                } else {
+                    themeArray = sortData(translationSelectedTheme(activeIndex), getSectionName(activeIndex), false)
                 }
-                for (let i = 0; i < themeArray.length; i++) {
+                let maxValue = Number(themeArray[themeArray.length - 1][getSectionName(activeIndex)])
 
-                    if (data[i] !== undefined && data[i] !== null && matcher(d.properties.gem_name.toString().toLowerCase(), data[i].gemeindeName.toLowerCase())) {
-                        let toNorm, maxValue;
-                        let themeArray = sortData(translationSelectedTheme(activeIndex), getSectionName(activeIndex),false)
-                        if (themeArray === -1 || getSectionName(activeIndex) === -1){
-                            throw "SectionNotAvailable"
-                        }
-                        if (themeArray[i] !== undefined) {
-                            toNorm = parseFloat(themeArray[i][getSectionName(activeIndex)])
-                            maxValue = parseFloat(themeArray[themeArray.length - 1][getSectionName(activeIndex)])
-                        }
-                        else {
-                            return cScale(0)
-                        }
+                if (activeIndex !== 3 && activeIndex !== 8) {
+                    currentMaxValue = (maxValue/getSummeWithIndex(activeIndex)*100).toFixed(2) + "%"
+                } else if(activeIndex === 3) {
+                    currentMinValue = 0
+                    currentMaxValue = maxValue
+                } else {
+                    currentMaxValue = (maxValue*100).toFixed(2) + "%"
+                }
 
-                        if (toNorm === undefined) {
-                            return cScale(0)
+                for (let i = 0; i < data.length; i++) {
+                    for (let j = 0; j < themeArray.length; j++) {
+
+                        if (data[i] !== undefined && data[j] !== null
+                            && matcher(d.properties.gem_name.toString().toLowerCase(), themeArray[j].gemeindeName.toLowerCase())
+                            //&& matcher(data[i].gemeindeName.toLowerCase(), themeArray[j].gemeindeName.toLowerCase())
+                        ){
+                            let toNorm;
+
+
+                            if (themeArray === -1 || getSectionName(activeIndex) === -1) {
+                                throw "SectionNotAvailable"
+                            }
+                            if (themeArray[j] !== undefined) {
+                                toNorm = Number(themeArray[j][getSectionName(activeIndex)])
+
+                            } else {
+                                return cScale(0)
+                            }
+
+                            if (toNorm === undefined) {
+                                return cScale(0)
+                            }
+                            let normalized = toNorm / maxValue
+                            if (normalized > 1) {
+                                normalized = 1;
+                            }
+                            return cScale(100 * normalized)//return cScale(0)
                         }
-                        let normalized = toNorm / maxValue
-                        if (normalized > 1) {
-                            normalized = 1;
-                        }
-                        return cScale(100 * normalized)//return cScale(0)
                     }
                 }
-                console.log("outside undefined")
-
                 return cScale(0)
             }
 
@@ -712,7 +730,7 @@ var scrollVis = function () {
                 for (let i = 0; i < partei_starken_Array.length; i++) {
                     if (data[i] !== undefined && data[i] !== null && matcher(d.properties.gem_name.toString().toLowerCase(), data[i].gemeindeName.toLowerCase())) {
 
-                        switch (currentlySelectedDD.id) {
+                        switch (partei.id) {
                             case 0:
                                 toNorm = data[i].parteien.svp.value
                                 maxValue = data[data.length - 1].parteien.svp.value
@@ -908,160 +926,131 @@ var scrollVis = function () {
         })
     }
     
-    function toolTipText(selectedDDNumber, d, dropDownVisible) {
-        let text
-        let themeArray = translationSelectedTheme(activeIndex)
-        let gemeindeName = d.properties.gem_name;
+    function toolTipText(selectedDD, d, dropDownVisible) {
+        let text = undefined;
+        let themeArray = sortData(translationSelectedTheme(activeIndex), getSectionName(activeIndex), false);
+        let gemeindeName = d.properties.gem_name.toString();
         for (let i = 0; i < partei_starken_Array.length; i++) {
-            if (matcher(gemeindeName.toString().toLowerCase(), partei_starken_Array[i].gemeindeName.toLowerCase())) {
-                switch (selectedDDNumber) {
-                    case 0: {
-                        let svp = partei_starken_Array[i].parteien.svp.value
-                        text = gemeindeName + " — " + "svp: " + (svp !== undefined ? (svp) : '0') + "%";
-                        break;
-                    }
-                    case 1: {
-                        let sp = partei_starken_Array[i].parteien.sp.value
-                        text = gemeindeName + " — " + "sp: " + (sp !== undefined ? (sp) : '0') + "%";
-                        break;
-                    }
-                    case 2: {
-                        let fdp = partei_starken_Array[i].parteien.fdp.value
-                        text = gemeindeName + " — " + "fdp: " + (fdp !== undefined ? (fdp) : '0') + "%";
-                        break;
-                    }
-                    case 3: {
-                        let gp = partei_starken_Array[i].parteien.gp.value
-                        text = gemeindeName + " — " + "gp: " + (gp !== undefined ? (gp) : '0') + "%";
-                        break;
-                    }
-                    case 4: {
-                        let cvp = partei_starken_Array[i].parteien.cvp.value
-                        text = gemeindeName + " — "+ "cvp: " + (cvp !== undefined ? (cvp) : '0') + "%";
-                        break;
-                    }
-                    case 5: {
-                        let glp = partei_starken_Array[i].parteien.glp.value
-                        text = gemeindeName + " — " + "glp: " + (glp !== undefined ? (glp) : '0') + "%";
-                        break;
-                    }
-                    case 6: {
-                        let evp = partei_starken_Array[i].parteien.evp.value
-                        text = gemeindeName + " — " + "evp: " + (evp !== undefined ? (evp) : '0') + "%";
-                        break;
-                    }
-                    default: {
-                        text = partei_starken_Array[i].gemeindeName
-                    }
-                }
-                switch (activeIndex){
-                    case -1:{
-                        break;
-                    }
-                    case 0:{
-                        break;
-                    }
-                    case 1:{
-                        break;
-                    }
-                    case 2:{ //mapOne
-                        if (themeArray[i] !== undefined) {
-                            text += "\nKindertagesstätte: " + (themeArray[i].kindertagesstaetten === undefined ?
-                                'Keine Daten vorhanden' :
-                                themeArray[i].kindertagesstaetten + "\t/\t" + summeTagesstätte + "\t=\t" +(Math.round((themeArray[i].kindertagesstaetten/summeTagesstätte)*10000)/100 +"%")) ;
-                        }
-                        else{
-                            text += "\nKindertagesstätte: " + 'Keine Daten vorhanden';
-                        }
-                        break;
-
-                    }
-
-                    case 3:{ //mapOneAHalf
-                        if (themeArray[i] !== undefined) {
-                            text += "\nBrutto Sozialhilfeausgaben/einwohner: " +
-                                (themeArray[i].brutto_sozialhilfe_je_einwohner !== undefined ?
-                                    themeArray[i].brutto_sozialhilfe_je_einwohner :
-                                    'Keine Daten vorhanden');
-                        }else{
-                            text += "\nBrutto Sozialhilfeausgaben/einwohner: " + 'Keine Daten vorhanden';
-
-                        }
-                        break;
-                    }
-                    case 4:{//MapTwo
-                        if (!dropDownVisible){
-                            text += "\nSteuerfüsse: " + (themeArray[i].gemeindesteuerfuss !== undefined ?
-                                "\n" + themeArray[i].gemeindesteuerfuss + "\t/\t" +summeSteuerfusse + "\t=\t"+ Math.round((themeArray[i].gemeindesteuerfuss/summeSteuerfusse)*10000)/100 + "%" :
-                                'Keine Daten vorhanden');
-                        }
-                        break;
-                    }
-                    case 5:{//MApThree
-                        if (!dropDownVisible){
-                            let thisK = 0;
-                            for (let k = 0; k< wohnbevoelkerung_Array.length; k++){
-                                if (matcher(themeArray[i].gemeindeName,wohnbevoelkerung_Array[k].gemeindeName)){
-                                    thisK = k;
-                                }
-                            }
-                            text += "\nKonfessionszugehörigkeit:\n" +
-                                "Evangelisch reformiert Einwohner d. Gemeinde / Evangelisch reformiert Gesamteinwohnerzahl des Kantons: " + (themeArray[i].evang !== undefined ?
-                                    (themeArray[i].evang + "\t/\t" + summeEvang + "\t=\t" +  Math.round((themeArray[i].evang/summeEvang)*10000)/100 + "%"
-                                    + "\nEvangelisch-reformiert d. Gemeinde/ Einwohnerzahl d. Gemeinde=\t" + themeArray[i].evang + " / " + wohnbevoelkerung_Array[thisK].bevoelkerung + "\t=\t" +  Math.round((themeArray[i].evang/wohnbevoelkerung_Array[thisK].bevoelkerung)*10000)/100 + "%")
-                                    : "Keine Daten vorhanden")
-                        }
-                        break;
-                    }
-                    case 6:{//Mapfour
-                        if (!dropDownVisible){
-                            let thisK = 0;
-                            for (let k = 0; k< wohnbevoelkerung_Array.length; k++){
-                                if (matcher(themeArray[i].gemeindeName,wohnbevoelkerung_Array[k].gemeindeName)){
-                                    thisK = k;
-                                }
-                            }
-                            text += "\nKonfessionszugehörigkeit:\n" +
-                                "Römisch Katholisch Einwohner d. Gemeinde / Römisch Katholische Gesamteinwohnerzahl des Kantons: " + (themeArray[i].rom !== undefined ?
-                                    (themeArray[i].rom + "\t/\t" + summeRom + "\t=\t" +  Math.round((themeArray[i].rom/summeRom)*10000)/100 + "%"
-                                        + "\nRömisch-Katholisch d. Gemeinde/ Einwohnerzahl d. Gemeinde=\t" + themeArray[i].rom + " / " + wohnbevoelkerung_Array[thisK].bevoelkerung + "\t=\t" +  Math.round((themeArray[i].rom/wohnbevoelkerung_Array[thisK].bevoelkerung)*10000)/100 + "%")
-                                    : "Keine Daten vorhanden")
-                        }
-                        break;
-                    }
-                    case 7:{//Mapfour
-                        if (!dropDownVisible){
-                            let thisK = 0;
-                            for (let k = 0; k< wohnbevoelkerung_Array.length; k++){
-                                if (matcher(themeArray[i].gemeindeName,wohnbevoelkerung_Array[k].gemeindeName)){
-                                    thisK = k;
-                                }
-                            }
-                            text += "\nKonfessionszugehörigkeit:\n" +
-                                "\"Übrige Einwohner d. Gemeinde / übrige Gesamteinwohnerzahl des Kantons:: " + (themeArray[i].ubrige !== undefined ?
-                                    (themeArray[i].ubrige + "\t/\t" + summeUbrige + "\t=\t" +  Math.round((themeArray[i].ubrige/summeUbrige)*10000)/100 + "%"
-                                        + "\nÜbrige d. Gemeinde / Einwohnerzahl d. Gemeinde=\t" + themeArray[i].ubrige + " / " + wohnbevoelkerung_Array[thisK].bevoelkerung + "\t=\t" +  Math.round((themeArray[i].ubrige/wohnbevoelkerung_Array[thisK].bevoelkerung)*10000)/100 + "%")
-                                    : "Keine Daten vorhanden")
-                        }
-                        break;
-                    }
-                    case 8:{//MapFive
-                        if (!dropDownVisible){
-                            text += "\nAusländeranteil:\n" +
-                                (themeArray[i].auslaenderanteil !== undefined ?
-                                    ((Math.round(themeArray[i].auslaenderanteil*100)) + "%")
-
-                                    : "Keine Daten vorhanden")
-                        }
-                        break;
-                    }
+            if (matcher(partei_starken_Array[i].gemeindeName.toLowerCase(),gemeindeName.toLowerCase())) {
+                let parteiV = partei_starken_Array[i].parteien[selectedDD.name].value;
+                if (parteiV !== undefined){
+                    text = gemeindeName + " — " + selectedDD.name + ": " + (parteiV !== undefined ? (parteiV) : '0') + "%";
                 }
             }
+            if (text !== undefined && dropDownVisible){
+                return text
+            }
+            else {
+                if (text !== undefined && !dropDownVisible) {
+                    for (let j = 0; j < themeArray.length; j++) {
+                        if (matcher(gemeindeName.toLowerCase(), partei_starken_Array[i].gemeindeName.toLowerCase())) {
+                            if (matcher(partei_starken_Array[i].gemeindeName.toLowerCase(), themeArray[j].gemeindeName.toLowerCase())) {
+                                switch (activeIndex) {
+                                    case -1: {
+                                        break;
+                                    }
+                                    case 0: {
+                                        break;
+                                    }
+                                    case 1: {
+                                        break;
+                                    }
+                                    case 2: { //mapOne
+                                        if (themeArray[j] !== undefined) {
+                                            text += "\nKindertagesstätte: " + (themeArray[j].kindertagesstaetten === undefined ?
+                                                'Keine Daten vorhanden' :
+                                                themeArray[j].kindertagesstaetten + "\t/\t" + summeTagesstätte + "\t=\t" + (Math.round((themeArray[j].kindertagesstaetten / summeTagesstätte) * 10000) / 100 + "%"));
+                                        } else {
+                                            text += "\nKindertagesstätte: " + 'Keine Daten vorhanden';
+                                        }
+                                        break;
+
+                                    }
+
+                                    case 3: { //mapOneAHalf
+                                        if (themeArray[j] !== undefined) {
+                                            text += "\nBrutto Sozialhilfeausgaben/einwohner: " +
+                                                (themeArray[j].brutto_sozialhilfe_je_einwohner !== undefined ?
+                                                    themeArray[j].brutto_sozialhilfe_je_einwohner :
+                                                    'Keine Daten vorhanden');
+                                        } else {
+                                            text += "\nBrutto Sozialhilfeausgaben/einwohner: " + 'Keine Daten vorhanden';
+
+                                        }
+                                        break;
+                                    }
+                                    case 4: {//MapTwo
+                                            text += "\nSteuerfüsse: " + (themeArray[j].gemeindesteuerfuss !== undefined ?
+                                                "\n" + themeArray[j].gemeindesteuerfuss + "\t/\t" + summeSteuerfusse + "\t=\t" + Math.round((themeArray[j].gemeindesteuerfuss / summeSteuerfusse) * 10000) / 100 + "%" :
+                                                'Keine Daten vorhanden');
+
+                                        break;
+                                    }
+                                    case 5: {//MApThree
+                                            let thisK = 0;
+                                            for (let k = 0; k < wohnbevoelkerung_Array.length; k++) {
+                                                if (matcher(themeArray[j].gemeindeName, wohnbevoelkerung_Array[k].gemeindeName)) {
+                                                    thisK = k;
+                                                }
+                                            }
+                                            text += "\nKonfessionszugehörigkeit:\n" +
+                                                "Evangelisch reformiert Einwohner d. Gemeinde / Evangelisch reformiert Gesamteinwohnerzahl des Kantons: " + (themeArray[j].evang !== undefined ?
+                                                    (themeArray[j].evang + "\t/\t" + summeEvang + "\t=\t" + Math.round((themeArray[j].evang / summeEvang) * 10000) / 100 + "%"
+                                                        + "\nEvangelisch-reformiert d. Gemeinde/ Einwohnerzahl d. Gemeinde=\t" + themeArray[j].evang + " / " + wohnbevoelkerung_Array[thisK].bevoelkerung + "\t=\t" + Math.round((themeArray[j].evang / wohnbevoelkerung_Array[thisK].bevoelkerung) * 10000) / 100 + "%")
+                                                    : "Keine Daten vorhanden")
+
+                                        break;
+                                    }
+                                    case 6: {//Mapfour
+                                            let thisK = 0;
+                                            for (let k = 0; k < wohnbevoelkerung_Array.length; k++) {
+                                                if (matcher(themeArray[j].gemeindeName, wohnbevoelkerung_Array[k].gemeindeName)) {
+                                                    thisK = k;
+                                                }
+                                            }
+                                            text += "\nKonfessionszugehörigkeit:\n" +
+                                                "Römisch Katholisch Einwohner d. Gemeinde / Römisch Katholische Gesamteinwohnerzahl des Kantons: " + (themeArray[j].rom !== undefined ?
+                                                    (themeArray[j].rom + "\t/\t" + summeRom + "\t=\t" + Math.round((themeArray[j].rom / summeRom) * 10000) / 100 + "%"
+                                                        + "\nRömisch-Katholisch d. Gemeinde/ Einwohnerzahl d. Gemeinde=\t" + themeArray[j].rom + " / " + wohnbevoelkerung_Array[thisK].bevoelkerung + "\t=\t" + Math.round((themeArray[j].rom / wohnbevoelkerung_Array[thisK].bevoelkerung) * 10000) / 100 + "%")
+                                                    : "Keine Daten vorhanden")
+                                        break;
+                                    }
+                                    case 7: {//Mapfour
+                                            let thisK = 0;
+                                            for (let k = 0; k < wohnbevoelkerung_Array.length; k++) {
+                                                if (matcher(themeArray[j].gemeindeName, wohnbevoelkerung_Array[k].gemeindeName)) {
+                                                    thisK = k;
+                                                }
+                                            }
+                                            text += "\nKonfessionszugehörigkeit:\n" +
+                                                "\"Übrige Einwohner d. Gemeinde / übrige Gesamteinwohnerzahl des Kantons:: " + (themeArray[j].ubrige !== undefined ?
+                                                    (themeArray[j].ubrige + "\t/\t" + summeUbrige + "\t=\t" + Math.round((themeArray[j].ubrige / summeUbrige) * 10000) / 100 + "%"
+                                                        + "\nÜbrige d. Gemeinde / Einwohnerzahl d. Gemeinde=\t" + themeArray[j].ubrige + " / " + wohnbevoelkerung_Array[thisK].bevoelkerung + "\t=\t" + Math.round((themeArray[j].ubrige / wohnbevoelkerung_Array[thisK].bevoelkerung) * 10000) / 100 + "%")
+                                                    : "Keine Daten vorhanden")
+                                        break;
+                                    }
+                                    case 8: {//MapFive
+                                            text += "\nAusländeranteil:\n" +
+                                                (themeArray[j].auslaenderanteil !== undefined ?
+                                                    ((Math.round(themeArray[j].auslaenderanteil * 100)) + "%")
+
+                                                    : "Keine Daten vorhanden")
+                                        break;
+                                    }
+                                }
+                                return text;
+                            }
+                        }
+                    }
+                    return text
+                }
+
+            }
         }
-        return text;
     }
 
-    function tooltip(selectedDDNumber, dropDownVisible) {
+
+    function tooltip(selectedDD, dropDownVisible) {
         let text
         g.selectAll(".map-number1")
             .on("mouseover", function(e,d) {
@@ -1076,7 +1065,7 @@ var scrollVis = function () {
 
                 }else {
                     e.target.attributes.getNamedItem("stroke").value = "#FFF";
-                    text = toolTipText(selectedDDNumber, d, dropDownVisible);
+                    text = toolTipText(selectedDD, d, dropDownVisible);
                 }
                 e.target.attributes.getNamedItem("stroke-width").value = 5;
 
@@ -1108,6 +1097,12 @@ var scrollVis = function () {
             two = two.split(' ');
             if (one[0].startsWith(two[0])) {
                 return true;
+            }
+            if (two[0].startsWith(one[0])) {
+                return true;
+            }
+            else{
+                return false;
             }
         }
         else{
@@ -1236,7 +1231,7 @@ var scrollVis = function () {
             changeTextForSections()
             setFilling(selectedDD, !DropDownSectionVisible)
             if (showAll || showAll === undefined) {
-                tooltip(selectedDD.id, DropDownSectionVisible);
+                tooltip(selectedDD, DropDownSectionVisible);
                 drawScale("colorscale", d3.interpolate("#FFF", selectedDD.color))
             }
         }catch (e){
@@ -1321,6 +1316,30 @@ function display(data) {
     });
 
 
+}
+
+function getSummeWithIndex(i) {
+    if (i === 2) {
+        return summeTagesstätte
+    }
+    if (i === 3) {
+        return 1
+    }
+    if (i === 4) {
+        return summeSteuerfusse
+    }
+    if (i === 5) {
+        return summeEvang
+    }
+    if (i === 6) {
+        return summeRom
+    }
+    if (i === 7) {
+        return summeUbrige
+    }
+    if (i === 8) {
+        return summeAusländer
+    }
 }
 
 let set = ["partei_starken", "konfessionszugehoerigkeit", "kindertagesstaette", "steuerfuesse", "sozAusgabe", "auslaenderAnteil_Anteil"]

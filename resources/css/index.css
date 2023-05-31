@@ -16,13 +16,15 @@
 }
 
 .step {
-    /*
-    margin-bottom: 500px;
-    */
     font-family: "TiemposTextWeb-Regular","Georgia";
     font-size: 16px;
     line-height: 23px;
     color: #767678;
+}
+
+.step:not(:first-child) {
+    padding-top: 150px;
+    height: 200px;
 }
 
 #sections .title {
@@ -32,6 +34,15 @@
     margin-bottom: 2px;
     color: #262626;
     line-height: 1.2em;
+}
+
+.title {
+    margin-bottom: 20px;
+    font-family: "TiemposTextWeb-Regular","Georgia";
+    font-size: 19px;
+    line-height: 23px;
+    color: #767678;
+    font-weight: bold;
 }
 
 
