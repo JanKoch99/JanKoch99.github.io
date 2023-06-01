@@ -1,0 +1,11 @@
+{
+  "title": "Thurgauer GeoSpatial-OpenData Visualisierung",
+  "description": "Diese Scroller-App visaulisiert auf einer Geokarte den Zusammenhang zwischen Parteistärken mit politischen Idealen im Kanton Thurgau im Jahr 2020-2022.",
+  "authors": [
+    {"name": "Jan Koch", "email": "jan.koch1@students.unibe.ch"},
+    {"name": "Alessio Petrone", "email": "alessio.petrone@students.unibe.ch"}
+  ],
+  "date": "2023-06-01",
+  "category": "research ODER society",
+  "software_license": "GNU"
+}

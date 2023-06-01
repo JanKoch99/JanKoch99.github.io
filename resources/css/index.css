@@ -91,7 +91,11 @@ svg {
 .colorscale:first-of-type {
     border-left: 1px solid black !important;
 }
+.colorscale:last-of-type {
+    border-right: 1px solid black !important;
+}
 
 .colorscale {
     border-left: none !important;
+    border-right: none !important;
 }

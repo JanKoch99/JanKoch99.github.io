@@ -488,9 +488,8 @@ var scrollVis = function () {
             .attr('class', 'sub-title openvis-title')
             .attr('x', width / 2)
             .attr('y', (height / 7) + (height / 7))
-            .attr("font-size", () => {
-                return width / 15
-            })
+            .attr("font-size", 16)
+            .attr("font-family",  "TiemposTextWeb-Regular, Georgia")
             .text('OpenData Visualisierung');
 
 
@@ -930,11 +929,12 @@ var scrollVis = function () {
         let text = undefined;
         let themeArray = sortData(translationSelectedTheme(activeIndex), getSectionName(activeIndex), false);
         let gemeindeName = d.properties.gem_name.toString();
+        let hasText = false;
         for (let i = 0; i < partei_starken_Array.length; i++) {
             if (matcher(partei_starken_Array[i].gemeindeName.toLowerCase(),gemeindeName.toLowerCase())) {
                 let parteiV = partei_starken_Array[i].parteien[selectedDD.name].value;
                 if (parteiV !== undefined){
-                    text = gemeindeName + " — " + selectedDD.name + ": " + (parteiV !== undefined ? (parteiV) : '0') + "%";
+                    text = gemeindeName + " — " + selectedDD.name.toUpperCase() + ": " + (parteiV !== undefined ? (parteiV) : '0') + "%";
                 }
             }
             if (text !== undefined && dropDownVisible){
@@ -956,30 +956,33 @@ var scrollVis = function () {
                                         break;
                                     }
                                     case 2: { //mapOne
+                                        hasText = true;
                                         if (themeArray[j] !== undefined) {
                                             text += "\nKindertagesstätte: " + (themeArray[j].kindertagesstaetten === undefined ?
-                                                'Keine Daten vorhanden' :
+                                                'In dieser Gemeinde gibt es keine Kita.' :
                                                 themeArray[j].kindertagesstaetten + "\t/\t" + summeTagesstätte + "\t=\t" + (Math.round((themeArray[j].kindertagesstaetten / summeTagesstätte) * 10000) / 100 + "%"));
                                         } else {
-                                            text += "\nKindertagesstätte: " + 'Keine Daten vorhanden';
+                                            text += "\nIn dieser Gemeinde gibt es keine Kita.";
                                         }
                                         break;
 
                                     }
 
                                     case 3: { //mapOneAHalf
+                                        hasText = true;
                                         if (themeArray[j] !== undefined) {
-                                            text += "\nBrutto Sozialhilfeausgaben/einwohner: " +
+                                            text += "\nBrutto Sozialhilfeausgaben/Einwohner: " +
                                                 (themeArray[j].brutto_sozialhilfe_je_einwohner !== undefined ?
                                                     themeArray[j].brutto_sozialhilfe_je_einwohner :
                                                     'Keine Daten vorhanden');
                                         } else {
-                                            text += "\nBrutto Sozialhilfeausgaben/einwohner: " + 'Keine Daten vorhanden';
+                                            text += "\nBrutto Sozialhilfeausgaben/Einwohner: " + 'Keine Daten vorhanden';
 
                                         }
                                         break;
                                     }
                                     case 4: {//MapTwo
+                                        hasText = true;
                                             text += "\nSteuerfüsse: " + (themeArray[j].gemeindesteuerfuss !== undefined ?
                                                 "\n" + themeArray[j].gemeindesteuerfuss + "\t/\t" + summeSteuerfusse + "\t=\t" + Math.round((themeArray[j].gemeindesteuerfuss / summeSteuerfusse) * 10000) / 100 + "%" :
                                                 'Keine Daten vorhanden');
@@ -987,21 +990,21 @@ var scrollVis = function () {
                                         break;
                                     }
                                     case 5: {//MApThree
+                                        hasText = true;
                                             let thisK = 0;
                                             for (let k = 0; k < wohnbevoelkerung_Array.length; k++) {
                                                 if (matcher(themeArray[j].gemeindeName, wohnbevoelkerung_Array[k].gemeindeName)) {
                                                     thisK = k;
                                                 }
                                             }
-                                            text += "\nKonfessionszugehörigkeit:\n" +
-                                                "Evangelisch reformiert Einwohner d. Gemeinde / Evangelisch reformiert Gesamteinwohnerzahl des Kantons: " + (themeArray[j].evang !== undefined ?
-                                                    (themeArray[j].evang + "\t/\t" + summeEvang + "\t=\t" + Math.round((themeArray[j].evang / summeEvang) * 10000) / 100 + "%"
-                                                        + "\nEvangelisch-reformiert d. Gemeinde/ Einwohnerzahl d. Gemeinde=\t" + themeArray[j].evang + " / " + wohnbevoelkerung_Array[thisK].bevoelkerung + "\t=\t" + Math.round((themeArray[j].evang / wohnbevoelkerung_Array[thisK].bevoelkerung) * 10000) / 100 + "%")
+                                            text += "\nKonfessionszugehörigkeit:\n" + (themeArray[j].evang !== undefined ?
+                                                    (themeArray[j].evang + "\t/\t" + summeEvang + "\t=\t" + Math.round((themeArray[j].evang / summeEvang) * 10000) / 100 + "%")
                                                     : "Keine Daten vorhanden")
 
                                         break;
                                     }
                                     case 6: {//Mapfour
+                                        hasText = true;
                                             let thisK = 0;
                                             for (let k = 0; k < wohnbevoelkerung_Array.length; k++) {
                                                 if (matcher(themeArray[j].gemeindeName, wohnbevoelkerung_Array[k].gemeindeName)) {
@@ -1009,13 +1012,11 @@ var scrollVis = function () {
                                                 }
                                             }
                                             text += "\nKonfessionszugehörigkeit:\n" +
-                                                "Römisch Katholisch Einwohner d. Gemeinde / Römisch Katholische Gesamteinwohnerzahl des Kantons: " + (themeArray[j].rom !== undefined ?
-                                                    (themeArray[j].rom + "\t/\t" + summeRom + "\t=\t" + Math.round((themeArray[j].rom / summeRom) * 10000) / 100 + "%"
-                                                        + "\nRömisch-Katholisch d. Gemeinde/ Einwohnerzahl d. Gemeinde=\t" + themeArray[j].rom + " / " + wohnbevoelkerung_Array[thisK].bevoelkerung + "\t=\t" + Math.round((themeArray[j].rom / wohnbevoelkerung_Array[thisK].bevoelkerung) * 10000) / 100 + "%")
-                                                    : "Keine Daten vorhanden")
+                                                (themeArray[j].rom !== undefined ? (themeArray[j].rom + "\t/\t" + summeRom + "\t=\t" + Math.round((themeArray[j].rom / summeRom) * 10000) / 100 + "%") : "Keine Daten vorhanden")
                                         break;
                                     }
                                     case 7: {//Mapfour
+                                        hasText = true;
                                             let thisK = 0;
                                             for (let k = 0; k < wohnbevoelkerung_Array.length; k++) {
                                                 if (matcher(themeArray[j].gemeindeName, wohnbevoelkerung_Array[k].gemeindeName)) {
@@ -1023,14 +1024,13 @@ var scrollVis = function () {
                                                 }
                                             }
                                             text += "\nKonfessionszugehörigkeit:\n" +
-                                                "\"Übrige Einwohner d. Gemeinde / übrige Gesamteinwohnerzahl des Kantons:: " + (themeArray[j].ubrige !== undefined ?
-                                                    (themeArray[j].ubrige + "\t/\t" + summeUbrige + "\t=\t" + Math.round((themeArray[j].ubrige / summeUbrige) * 10000) / 100 + "%"
-                                                        + "\nÜbrige d. Gemeinde / Einwohnerzahl d. Gemeinde=\t" + themeArray[j].ubrige + " / " + wohnbevoelkerung_Array[thisK].bevoelkerung + "\t=\t" + Math.round((themeArray[j].ubrige / wohnbevoelkerung_Array[thisK].bevoelkerung) * 10000) / 100 + "%")
-                                                    : "Keine Daten vorhanden")
+                                                (themeArray[j].ubrige !== undefined ?
+                                                    (themeArray[j].ubrige + "\t/\t" + summeUbrige + "\t=\t" + Math.round((themeArray[j].ubrige / summeUbrige) * 10000) / 100 + "%"): "Keine Daten vorhanden")
                                         break;
                                     }
                                     case 8: {//MapFive
-                                            text += "\nAusländeranteil:\n" +
+                                        hasText = true;
+                                            text += "\nAusländer:innenanteil:\n" +
                                                 (themeArray[j].auslaenderanteil !== undefined ?
                                                     ((Math.round(themeArray[j].auslaenderanteil * 100)) + "%")
 
@@ -1039,6 +1039,14 @@ var scrollVis = function () {
                                     }
                                 }
                                 return text;
+                            }
+                        }
+                    }
+                    if (!hasText) {
+                        switch (activeIndex) {
+                            case 2: {
+                                text += "\nIn dieser Gemeinde gibt es keine Kita.";
+                                break;
                             }
                         }
                     }
